@@ -6,56 +6,56 @@ date:   2018-09-21 17:15:32 +0900
 
 ###1. 수업 소개
 
-  * Version Control Systems
-    - Version Management, not by changing the file name(파일의 이름을 바꾸지 않고 버전관리)
-    - Backup, Recorvery, Collaboration
-    - Version Control Systems의 종류 : CVS, SVN, GIT
+* Version Control Systems
+  - Version Management, not by changing the file name(파일의 이름을 바꾸지 않고 버전관리)
+  - Backup, Recorvery, Collaboration
+  - Version Control Systems의 종류 : CVS, SVN, GIT
 
-  * 왜 Git을 사용하지?
-    - Git은 정말 복잡하다.
-    - 그럼 도대체 왜 Git을 쓰나?
-    - 현실은 Git보다 지옥같다.
-    - **버전관리 하지 않고 코드를 관리하는 것이 더 힘들다. 현실의 복잡성이 더 크다.**
----------------------------------------
+* 왜 Git을 사용하지?
+  - Git은 정말 복잡하다.
+  - 그럼 도대체 왜 Git을 쓰나?
+  - 현실은 Git보다 지옥같다.
+  - **버전관리 하지 않고 코드를 관리하는 것이 더 힘들다. 현실의 복잡성이 더 크다.**
+---
 
 ###2. 저장소 만들기
 
-    - **git init** : 현재 위치한 디렉토리에 git 저장소를 생성
-    - **.git** 디렉토리에 버전 관련 정보가 들어있다.
----------------------------------------
+  - **git init** : 현재 위치한 디렉토리에 git 저장소를 생성
+  - **.git** 디렉토리에 버전 관련 정보가 들어있다.
+---
 
 ###3. git이 관리할 대상으로 파일 등록
 
-    - git 저장소에 파일이 추가되더라도 별도로 추적하지 않으면 해당 파일의 버전관리를 하지 않는다.
-    - 따라서 **git add** 명령어로 git이 파일을 추적하도록 명령해야 한다.
-    - **git add f1.txt** : f1.txt를 stage area에 올린다.
-    - **git status** : 저장소의 상태 확인
----------------------------------------
+  - git 저장소에 파일이 추가되더라도 별도로 추적하지 않으면 해당 파일의 버전관리를 하지 않는다.
+  - 따라서 **git add** 명령어로 git이 파일을 추적하도록 명령해야 한다.
+  - **git add f1.txt** : f1.txt를 stage area에 올린다.
+  - **git status** : 저장소의 상태 확인
+---
 
 ###4. 버전 만들기(commit)
 
-    - 최초로 추적할 때도 **git add** 명령어를 사용하지만 파일이 수정될 때도 **git add** 명령어를 사용한다.
-    - **git add** 하면 stage area에 올라가서 commit 대기 상태가 된다.
-    - **git commit** 하면 stage area에서 repository에 이동하여 저장된다.
----------------------------------------
+  - 최초로 추적할 때도 **git add** 명령어를 사용하지만 파일이 수정될 때도 **git add** 명령어를 사용한다.
+  - **git add** 하면 stage area에 올라가서 commit 대기 상태가 된다.
+  - **git commit** 하면 stage area에서 repository에 이동하여 저장된다.
+---
 
 ###5. 변경사항 확인하기
 
-  * git의 장점
-    - 과거의 어느 시점의 소스를 확인 가능
-    - 과거의 소스로 돌아갈 수 있다.
-    - **git log** : 로그 확인 명령어
-    - **git log -p** : 로그 상세 확인 명령어
-    - **git diff** : commit 간의 차이 확인 명령어
----------------------------------------
+* git의 장점
+  - 과거의 어느 시점의 소스를 확인 가능
+  - 과거의 소스로 돌아갈 수 있다.
+  - **git log** : 로그 확인 명령어
+  - **git log -p** : 로그 상세 확인 명령어
+  - **git diff** : commit 간의 차이 확인 명령어
+---
 
 ###6. 과거의 버전으로 돌아가기(commit 취소)
 
-    - **git reset [해당 commit id] --hard** : 해당 commit까지로 이동 (reset은 공유작업하는 source에서는 절대 하면 안된다.)
-        * reset한다고 해도 소스가 완전히 삭제된 것은 아니다. 다시 되돌릴 수 있다.
-    - **git revert [해당 commit id]** : commit을 취소한 내용을 새로운 버전으로 만드는 명령어
----------------------------------------
+  - **git reset [해당 commit id] --hard** : 해당 commit까지로 이동 (reset은 공유작업하는 source에서는 절대 하면 안된다.)
+      * reset한다고 해도 소스가 완전히 삭제된 것은 아니다. 다시 되돌릴 수 있다.
+  - **git revert [해당 commit id]** : commit을 취소한 내용을 새로운 버전으로 만드는 명령어
+---
 
 ###7. 메뉴얼 보는 방법
 
-    - **git commit --help**
+  - **git commit --help**
