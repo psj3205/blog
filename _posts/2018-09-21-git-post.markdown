@@ -70,6 +70,84 @@ date:   2018-09-21 17:15:32 +0900
 
 ### 7. 메뉴얼 보는 방법
 
-  - **git commit --help**
+    - **git commit --help**
 
 ---
+
+
+### 9. git의 혁신 - branch
+    - branch : 작업을 분기한다.
+
+ ---
+
+
+### 10. branch 만들기
+   - **git branch** : branch 목록 확인
+   - **git branch [만들고자 하는 branch명]** : 새로운 branch 생성
+   - **git checkout [변경하고자 하는 branch명]** : branch 변경
+
+ ---
+
+
+### 11. branch 정보확인
+   - **git log --branches --decorate** : 모든 branch의 log 확인
+   - **git log --branches --graph** : 가지 모양의 그래프로 모든 branch의 log 확인
+   - **git log --branches --graph --decorate --oneline** : 가지 모양의 그래프로 모든 branch의 log를 한줄로 확인
+   - **git log [branch1]..[branch2]** : branch간의 비교
+   - **git diff [branch1]..[branch2]** : branch간의 코드비교
+
+ ---
+
+
+### 12. branch 병합
+   - A branch로 B branch를 병합할 경우
+     - **git checkout A** : 합쳐지는 branch인 A branch로 변경
+     - **git merge B** : B branch를 A에 병합
+     - 병합하고자 하는 branch가 선택된 상태에서 병합되는 branch를 병합한다.
+   - **git branch -d [삭제하고자 하는 branch]** : branch 삭제
+
+ ---
+
+
+### 13. branch 병합 시 충돌해결
+   - 두개의 branch의 같은 부분이 서로 다르게 수정된 경우 merge를 하면 conflict가 발생
+   - **git merge [branch]** 를 수행하면 conflict가 발생한 부분이
+  	**<<<<<<<< HEAD
+  			<-------- 이 사이 구간이 현재 체크 아웃된 브랜치의 내용
+  	============
+  			<-------- 이 사이 구간이 병합하려는 대상의 내용
+  	>>>>>>>> branch
+     와 같이 표시된다.**
+   - 코드를 적절히 수정한 뒤 파일 저장
+   - **git add [conflict 발생한 파일명]** : 수정 후 add 한다.
+   - **git commit** : 마지막으로 commit하면 병합이 완료된다.
+
+ ---
+
+
+### 14. stash
+ - 다른 브랜치로 checkout을 해야 하는데(커밋을 하지 않으면 checkout 불가능) 현재 브랜치에서 작업이 완료되지 않은 경우 커밋을 하기에 애매하다
+ - 이런 경우 작업중이던 파일을 임시로 저장해두고 현재 브랜치의 상태를 마지막 커밋의 상태로 초기화하는 기능
+ - **git stash** : 작업중인 내용을 임시 저장(git status하면 변경사항들이 사라짐)
+ - **git stash apply** : 임시 저장해둔 작업을 불러옴(git status하면 변경사항들이 다시 나타남)
+ - **git stash list** : stash한 목록을 표시(윗쪽부터 최신 statsh)
+ - **git stash drop** : 가장 최신의 statsh를 삭제
+ - **git stash apply**; git stash drop; : stash 적용과 삭제를 한번에 명령
+ - **git stash pop** : git stash apply; git stash drop; 와 동일
+ - stash는 git add되어 버전 관리가 되고 있는 파일에 대해서만 사용가능(add되지 않는 파일은 statsh 불가능)
+
+ ---
+
+
+### 15. 원격 저장소
+ - 원격 저장소의 의미
+	- 원격 저장소에 source 백업가능
+	- 다른 사람과 협업가능
+ - 원격 저장소의 기초
+ 	- **git remote add origin [저장소의 주소]** : 원격저장소를 설정(origin은 저장소의 별명)
+ 	- **git remote -v** : 원격저장소의 상세 내용 표시
+ 	- **git remote remove origin** : 원격저장소 삭제
+ 	- **git push** : 원격저장소로 source 업로드
+		- **git push --set-upstream origin master** : 현재 로컬 저장소의 브렌치를 원격저장소의 마스터 브렌치로 푸쉬
+
+   ---
