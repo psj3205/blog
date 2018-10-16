@@ -134,19 +134,708 @@ date:   2018-10-12 19:51:02 +0900
 			- User mode > (키보드, 마우스) > system mode (ISR) > usermode > (모니터, 디스크, 프린터) > system mode(ISR) > user mode
 
 	* 하드웨어 보호
-		1) 입출력장치 보호
+		1. 입출력장치 보호
+			- 과거에는 한 컴퓨터에 여러명이 붙어서 사용
+			- 한사람이 잘못된 시도를 하면 여러사람에게 피해
 			- 다른 사용자의 입출력, 정보 등에 방해(예: 프린터 혼선, 리셋, 다른 사람의 파일 읽고 쓰기 등)
 			- 해결법
-				1) 입출력 명령을 특권명령으로 : IN, OUT
-				2) 입출력을 하려면 운영체제에게 요청하고(system mode로 전환)
-				3) 운영체제가 입출력 대행, 마친 후 다시 user mode 복귀
-				4) 올바른 요청이 아니면 운영체제가 거부
+				1. 입출력 명령을 특권명령으로 : IN, OUT
+				2. 입출력을 하려면 운영체제에게 요청하고(system mode로 전환)
+				3. 운영체제가 입출력 대행, 마친 후 다시 user mode 복귀
+				4. 올바른 요청이 아니면 운영체제가 거부
 			- 일반 어플리케이션은 직접 하드웨어에 접근 불가능 중간의 OS에서 처리
-		2) 메모리 보호
-		3) CPU 보호
+
+		2. 메모리 보호
+			- 다른 사용자 프로그램 또는 운영체제 영역 메모리를 접근하는 것을 **Segment Violation** 이라고 한다
+			- 사용자 프로그램이 또다른 사용자 프로그램 또는 운영체제가 위치한 메모리에 접근하는 것을 차단
+			- 해결법
+				1. **MMU(Memory Management Unit)** 를 두어서 다른 메모리 영역에 침범하는 것을 감시
+				2. MMU 설정은 **특권명령**: 운영체체만 바꿀 수 있다
+
+		3. CPU 보호
+			- 한 사용자가 실수 또는 고의로 CPU 시간 독점
+				1. 예 : 무한루프(다른 사용자의 프로그램 실행 불가)
+			- 해결법
+				1. **Timer를 두어 일정 시간 경과 시 타이머 인터럽트**
+				2. 인터럽트 서비스 루틴에서 어떤 프로그램에 CPU가 독점되어 있는지 확인
+				3. 독점되어 있는 프로그램이 발견된다면 중지하고 다른 프로그램으로 강제 전환
 
 
 ---
 
 
-### 4.
+### 4. 운영체제 서비스
+* 운영체제의 역할
+	- 프로세스 관리
+	- 주기억장치 관리
+	- 파일 관리
+	- 보조기억장치 관리
+	- 입출력 장치 관리
+	- 네트워킹
+	- 보호
+	- 기타
+
+* 프로세스 관리
+	- **프로세스** : 메모리에서 실행 중인 프로그램(Program in execution)
+		1. 메모리에 올라와서 **CPU에 의해 실행** 되는 프로그램
+		2. 하드디스크에 있는 프로그램과 구분
+
+	- 주요기능
+		1. 프로세스의 생성, 소멸
+		2. 프로세스 활동 일시중지, 활동 재개
+		3. 프로세스 간 통신(interprocess communication :IPC)
+		4. 프로세스 간 동기화
+		5. 교착상태 처리(deadlock handling)
+
+* 주기억장치 관리(Main memory management)
+	- 주요기능
+		1. 프로세스에게 메모리 공간 할당
+		2. 메모리의 어느 부분이 어느 프로세스에게 할당되었는가 추적, 감시
+		3. 프로세스 종료시 메모리 회수
+		4. 메모리의 효과적 사용
+		5. 가상 메모리: 물리적 실제 메모리보다 큰용량 갖도록
+
+* 파일 관리
+	- Track/Sector로 구성된 디스크를 파일이라는 논리적 관점으로 보이게 한다
+
+	- 주요기능
+		1. 파일의 생성과 삭제 (file creation & deletion)
+		2. 디렉토리(directory)의 생성과 삭제 (또는 폴더 folder)
+		3. 기본동작지원: open, close, read, write, create, delete
+		4. Track/sector – file 간의 매핑(mapping)
+		5. 백업(backup)
+
+* 보조기억장치 관리
+	- 하드 디스크, 플래시 메모리 등
+	- 주요기능
+		1. 빈공간 관리
+		2. 저장공간 할당
+		3. 디스크 스케줄링
+
+* 입출력 장치 관리
+	- I/O device Management
+	- 주요기능
+		1. 장치 드라이버
+		2. 입출력 장치의 성능향상 : buffering, caching, spooling
+
+* 시스템 콜
+	- 운영체제 서비스를 받기 위한 호출
+	- 메모리에 올라온 유저 프로그램(프로세스)가 실행 중 운영체제의 역할이 필요할 경우 요청하는 것이 **시스템콜**
+	- 주요 시스템 콜
+		1. Process: end, abort, load, execute, create, terminate, get/set attributes, wait event, signal event
+		2. Memory: allocate, free
+		3. File: create, delete, open, close, read, write, get/set attributes
+		4. Device: request, release, read, write, get/set attributes, attach/detache devices
+		5. Information: get/set time, get/set system data
+		6. Communication: socket, send, receive
+
+
+---
+
+
+### 5. 프로세스 관리
+* 프로세스
+	- 프로그램 VS 프로세스
+		1. **process, task, job** 모두 같은 의미
+		2. 하드디스크 안에 있으면 **프로그램** , 프로그램이 메인 메모리에 올라가면 **프로세스**
+	- 프로세스 상태
+		1. new : 하드디스크의 프로그램이 메인 메모리에 올라온 상태
+		2. ready : 메인 메모리에 올라온 후 초기화를 완료한 상태
+		3. running : CPU에 의해 실행 중인 상태
+		4. waiting : **입출력 장치에서 처리해야 할 일이 생기면** CPU는 다음 프로세스로 넘어간다. 이 때 다시 CPU 서비스를 받기 위해 대기하는 상태
+		5. terminated : 프로세스가 종료된 상태
+
+* PCB(Process Control Block)
+	- Task Control Block이라고도 함
+	- 프로세스에 대한 모든 정보
+	- process state (running, ready, waiting, …), PC(Program Counter), registers, MMU info (base, limit), CPU time, process id, list of open files, …
+	- 인간으로 비유하면 주민등록정보와 같다
+
+* Queues
+	- Job Queue
+			1. 하드디스크에서 메인 메모리로 올라갈 때 있는 큐
+			2. **Job scheduler(Long-term scheduler)** : Job Queue의 프로그램 중 어떤 프로그램을 메인 메모리를 올릴지 관리하는 프로그램
+	- Ready Queue
+			1. CPU 서비스를 받기 위해 대기하는 상태의 큐
+			2. **CPU scheduler(short-term scheduler)** : Ready Queue에 있는 프로세스 중 어떤 것에 CPU 서비스를 제공할지 관리하는 프로그램
+	- Device Queue
+			1. 장치를 사용하기 위해 대기하는 상태의 큐
+			2. **Device scheduler** : Device Queue에 있는 프로세스 중 어떤 것에 Device 서비스를 제공할지 관리하는 프로그램
+
+* Multiprogramming
+	- Degree of Multiprogramming : 메인 메모리에 프로세스가 몇개가 올라 가는가의 정도
+	- I/O bound process(문서편집 프로그램) vs CPU bound process(일기 예보)
+	- Job scheduler에서 I/O bound process와 CPU bound process의 분배를 적절히 하여 메인 메모리에 올린다
+	- **Swapping(Medium-term scheduler)**
+		1. Swap out : 메인 메모리에 있는 프로세스가 일정시간 작업을 하지 않으면 메인메모리에서 빠져서 하드디스크의 일정 공간(Backing Store)에 저장
+		2. Swap in : 그 프로세스가 다시 작업을 시작하면 하드디스크에서 메인메모리로 올린다
+	- Context switching(문맥 전환)
+		1. scheduler
+		2. Dispatcher
+		3. Context switching overhead
+
+
+---
+
+
+### 6. CPU 스케줄링
+* CPU Scheduling
+	- 선점(Preemptive) VS 비선점(Non-preemtive)
+		1. 선점 : 현재 CPU 서비스가 되고 있는 프로세스가 있음에도 불구하고 새로운 프로세스를 허용하는 스케줄링
+		2. 비선점 : 현재 CPU 서비스가 되고 있는 프로세스가 종료되어야 새로운 프로세스를 허용하는 스케줄링
+	- 스케줄링 척도(Scheduling criteria)
+		1. CPU 이용률
+		2. 처리율
+		3. 반환시간 : 전체 작업이 끝날 때까지 걸리는 시간
+		4. 대기시간 : Ready Queue에서 CPU 서비스를 받기 위해 대기하는 시간
+		5. 응답시간 : 처음 응답이 나오는데 걸리는 시간
+
+* CPU Scheduling Algorithms
+	- First-Come, First-Served(FCFS)
+	- Shortest-Job-First(SJF)
+	-	Priority
+	-	Round-Robin (RR)
+	-	Multilevel Queue
+	-	Multilevel Feedback Queue
+
+* First-Come, First-Served(FCFS)
+	- Simple & Fair
+	- Nonpreemptive Scheduling
+	- 예제 : 평균 대기시간을 구하라
+		- P1 대기시간 = 0, P2 대기시간 = 24, P3 대기시간 = 27(P1,P2,P3 순으로)
+		- 평균대기시간 = (0+24+27)/3 = **17 msec**
+		- P3 대기시간 = 0, P2 대기시간 = 3, P3 대기시간 = 6(P3,P2,P1 순으로)
+		- 평균대기시간 = (0+3+6)/3 = **3 msec**
+		- **짧게 끝나는 프로세스를 먼저하는 것이 유리**
+	- process		Burst time(msec)
+			P1					24
+			P2					3
+			p3					3
+	- Convoy Effect(호위효과)
+		1. 처리시간이 긴 프로세스 뒤에 다른 프로세스들이 뒤에서 대기하는 모습이 왕을 호위하는 모습과 비슷하다고 하여 붙여진 이름
+
+* Shortest-Job-First 1(SJF)
+	- 예제 : 평균 대기시간을 구하라
+		- (3+16+9+0)/4 = **7 msec**(SJF방식으로)
+		- (0+6+14+21)/4 = **10.25 msec**(FCFS방식으로 P1,P2,P3,P4순으로)
+	- process		Burst time(msec)
+			P1					6
+			P2					8
+			p3					7
+			p4					3
+	- 대기시간을 줄이는데 최적화 되어있는 알고리즘(이상적으로)
+	- 하지만 비현실적임
+
+* Shortest-Job-First 2(SJF)
+	- 예제 : 평균 대기시간을 구하라
+	- Nonpreemptive scheduling SJF방식으로
+		- 평균대기시간 = (0+7+15+9)/4 = 7.75 msec
+	- Preemptive scheduling SJF방식으로(Shortest Remaining Time First라고도 명명 : 최소잔여시간우선)
+		- 평균대기시간 = (9+0+15+2)/4 = 6.5 msec
+	- process		Arrival Time		Burst time(msec)
+			P1						0							8
+			P2						1							4
+			p3						2							9
+			p4						3							5
+
+* Priority Scheduling
+	- 우선순위가 높은 프로세스먼저
+	- 예제 : 평균 대기시간을 구하라
+		- 평균 대기시간 = (6+0+16+18+1)/5 = 8.2 msec
+	- process		 Burst Time		 Priority
+			P1						10						3
+			P2						1							1
+			p3						2							4
+			p4						1							5
+			p5						5							2
+
+	- Priority 설정기준
+		1. 내부요소 : 타임 리미트, 메모리 차지
+		2. 외부요소 : 비용을 지불한 순위, 정치적 요소
+
+	- Preemptive, Nonpreemptive 모두 가능
+
+	- 문제점
+		1. Indefinite blocking : starvation(기아)
+			- 우선순위가 낮은 프로세스는 높은 우선순위가 끝날때까지 대기를 하여도 높은 우선순위 프로세스가 새로운 들어와서 아무리 기다려도 실행이 되지 않는 현상
+		2. 해결법 : aging(대기를 오래하면 우선순위를 높여준다)
+
+* Rouond-Robin
+	- Time-sharing system(시분할/시공유 시스템)
+	- Time quantum 시간양자 = time slice(10~100 msec)
+	- Preemptive scheduling
+	- 예제
+		- time quantum = 4 msec
+		- 평균 대시시간 = (6+4+7)/3 =5.66 msec
+	- process		Burst time(msec)
+				P1					24
+				P2					3
+				p3					3
+
+	- 타임 퀀텀 사이즈에 따라 퍼포먼스가 달라진다
+		1. 타임 퀀텀을 무한대로 => FCFS와 같다
+		2. 타임 퀀텀을 영으로 => 프로세스들이 동시에 실행되는 것처럼 보임
+
+	- 예제 : **평균 반환시간** 을 구하라(프로세스가 실행이 끝날때까지의 시간)
+		- 평균 반환시간 = 11.0 msec(time quantum = 1), 12.25 msec(time quantum=5)
+		- process		Burst time(msec)
+				P1					6
+				P2					3
+				p3					1
+				p4					7
+
+* Multilevel Queue Scheduling
+	- Process groups
+		1. System processes
+		2. Interactive processes
+		3. Interative editing processes
+		4. Batch processes
+		5. Student processes
+
+	- 다양한 성격의 프로세스들을 한 큐에 두는 것이 적절하지 않다고 생각한 방법
+
+	- Single ready Queue -> Serveral Separate Queues
+		1. 각각의 Queue에 절대적 우선순위 존재
+		2. 또는 CPU time을 각 Queue에 차등배분
+		3. 각 Queue는 독립된 scheduling 정책
+
+* Multilevel Feedback Queue Scheduling
+	- 복수 개의 Queue
+	- 다른 Queue로의 점진적 이동
+		1. 모든 프로세스는 하나의 입구로 진입
+		2. 너무 많은 CPU time 사용 시 다른 Queue로 이동
+		3. 기아 상태 우려시 우선순위 높은 Queue로 이동
+
+### 7. 프로세스 생성과 종료
+* Process Creation
+	- 프로세스는 프로세스에 의해 만들어진다!
+		1. 부모 프로세스
+		2. 자식 프로세스
+		3. 프로세스 트리
+
+	- Process Identifier(PID)
+		1. 일반적으로 정수로 붙힌다
+		2. 프로세스를 구분하는 고유한 번호
+
+	- 프로세스 생성 시스템콜
+		1. fork() : 부모 프로세스 복사
+		2. exec() : 실행파일을 메모리로 가져오기
+
+	- 프로세스 종료 시스템콜
+		1. exit() : 해당 프로세스가 가졌던 모든 자원을 OS에게 반환
+
+### 8. 쓰레드(Thread)
+* Thread?
+	- 쓰레드 : 프로그램 내부의 흐름, 맥
+
+	- 다중 쓰레드(Multithreads)
+		1. 한 프로그램에 2개 이상의 맥
+		2. 맥이 빠른 시간 간격으로 스위칭 된다=>여러 맥이 동시에 실행되는 것처럼 보인다
+		3. 실제로는 한 순간에는 한 프로세스만 실행된다
+
+	- 예 : Web browser
+		1. 화면 출력하는 스레드 + 데이터 읽어오는 쓰레드
+
+	- 예 : Word processor
+		1. 화면 출력하는 쓰레드 + 키보드 입력 받는 쓰레드 + 철자/문법 오류 확인 쓰레드
+
+	- 예 : 음악, 동영상 플레이어, Eclipse IDE
+
+* Thread vs process
+	- 한 프로세스에는 기본 1개의 쓰레드
+	- 한 프로세스에 여러 개의 쓰레드도 가능
+	- 쓰레드 구조
+		1. 프로세스의 메모리 공간 공유
+		2. 프로세스의 자원 공유
+		3. 비공유 : 개별적인 PC(프로그램 카운터), SP(스텍 포인터), registers, stack
+	- 프로세스의 스위칭 vs 쓰레드의 스위칭
+		1. 과거에는 프로세스 단위로 스위칭이 작동했지만 현대에는 쓰레드 단위로 스위칭이 동작한다
+
+* 프로세스 동기화
+	- Process Synchronization
+		1. 공유하는 데이터를 동시에 접근하면 데이터의 불일치가 일어날 수 있다
+		2. 프로세스들 간의 순차적인 접근을 하여서 데이터의 일관성이 유지되도록 하는 것이 프로세스 동기화
+
+	- processes
+		1. 독립적 프로세스 vs 협동적 프로세스
+
+	- 예제 : 은행계좌문제
+		1. 부모님은 은행계좌에 입금, 자녀는 출금
+		2. 입금과 출금은 독립적으로 일어난다
+
+	- 입출금 동작에 시간 지연 추가
+		1. 잘못된 결과값
+		2. 이유 : 공통변수(예제에서는 잔액)에 대한 동시 업데이트
+		3. 해결 : 한번에 한 쓰레드만 업데이트하도록 -> 임계구역 문제
+
+* 임계구역 문제
+	- The Critical-Section Problem(임계구역 문제)
+	- Critical Section
+		1. 여러개의 쓰레드로 구성된 시스템에서 발생
+		2. 각각의 쓰레드가 공통변수를 바꾸는 일을 하는 경우에 쓰레드는 임계구역이라는 코드 영역을 가지고 있음(예제에서 잔액을 업데이트 하는 구간)
+	- 해결책
+		1. 상호배타 : 오직 한 쓰레드만 진입(잔액을 업데이트하는 코드는 동시에 실행 불가)
+		2. 진행 : 진입 결정은 유한 시간 내
+		3. 유한대기 : 어느 쓰레드라도 유한 시간 내(유한시간 내에 임계구역이 실행되어야 한다)
+
+* 프로세스/쓰레드 동기화 목적
+	- 임계구역 문제 해결(틀린 답이 나오지 않도록)
+	- 프로세스 실행 순서 제어(원하는대로)
+
+* 동기화 도구
+	- Synchronization Tools
+		1. Semaphores
+		2. Monitors
+		3. Misc
+
+	- Semaphores(세마포)
+		1. 동기화 문제 해결을 위한 소프트웨어 도구
+		2. 구조 : 정수형 변수 + 두 개의 동작(P, V)
+
+* 세마포
+	- 동작
+		1. P:Proberen(test)->acquire()
+		2. V:Verhogen(increment)->release()
+	- 구조(Java)
+		class Semaphore{
+			int value;	// number of permits
+			Semaphore(int value){
+					.....
+			}
+			void acquire(){
+					value--;
+					if(value < 0){
+						add this process/thread to list;
+						block;
+					}
+			}
+			void release(){
+					value++;
+					if(value <= 0){
+						remove a process P from list;
+						wakeup P;
+					}
+			}
+		}
+
+* 세마포
+	- 일반적 사용(1): 상호 배타(한번에 하나만)
+		- sem.value = 1;(number of permits: 1쓰레드만 세마포에 입장 가능하게 설정)
+		- sem.acquire();
+			Critical-Section()
+			sem.release();
+			1. Critical-Section() 전,후에 acquire()와 release()함수를 호출하여 동기화가 되게 한다
+			2. 부모가 잔액에 입금을 하는 코드에 진입하기 전에 acquire()가 먼저 실행된다
+			3. acquire()에서 value가 1감소 되고 Critical Section에서 잔고에 돈을 넣는다
+			4. 이 때 만약 스위칭 되어 자녀 쓰레드가 돈을 찾으려고 한다고 가정해본다
+			5. 자녀 쓰레드에서도 Critical Section에 진입하기 전에 acquire()가 실행된다
+			6. 하지만 value가 이미 0이였으므로 1 감소되면 value는 -1 이된다
+			7. 조건문이 만족하여 세마포어 리스트에 들어가고 블록된다
+			8. 다시 스위칭되어 부모 쓰레드에서 입금이 완료되고 release() 함수가 실행된다
+			9. value가 1 증가하면 value는 0이되고 조건문을 만족하여 세마포어 리스트에 있던 자녀 쓰레드를 다시 레디 큐로 보낸다
+			10. 자녀 쓰레드는 돈을 인출하는 코드를 실행한다
+
+	- 일반적 사용(2): Ordering
+		- sem.value = 0;
+			+------------------------------+
+			|       P1			|			P2			 |
+			+------------------------------+
+			|								|sam.acquire() |
+			+------------------------------+
+			|				S1			|				S2     |
+			+------------------------------+
+			| sam.release() |    					 |
+			+------------------------------+
+
+		- 실행 순서를 설정할 수 있다
+			1. 항상 입금먼저
+			2. 항상 출금먼저
+			3. 입출금 교대
+
+### 9. 전통적 동기화 예제
+* 전통적 동기화 예제
+	- Producer and Consumer Problem
+		1. 생산자-소비자 문제
+		2. 유한버퍼 문제(Bounded Buffer Problem)
+
+	- Renders-Writers Problem
+		1. 공유 데이터베이스 접근
+
+	- Dining Philosopher Problem
+		1. 식사하는 철학자 문제
+
+* Producer-Consumer Problem
+	- 생산자-소비자 문제
+		1. **생산자가 데이터를 생산하면 소비자는 그것을 소비**
+		2. 예: 컴파일러->에셈블러, 파일 서버->클라이언트, 웹서버->웹클라이언트
+
+	- Bounded buffer
+		1. 생산된 데이터는 버퍼에 일단 저장(생산속도와 소비속도 차이 등)
+		2. 현실 시스템에서 버퍼 크기는 유한
+		3. **생산자는 버퍼가 가득 차면 더 넣을 수 없다**
+		4. **소비자는 버퍼가 비면 뺄 수 없다**
+
+	- 소스
+		class Buffer {
+			int[] buf;
+			int size;
+			int count;
+			int in;
+			int out;
+			Buffer(int size) {
+				buf = new int[size];
+				this.size = size;
+				count = in = out = 0;
+			}
+			void insert(int item) {
+				// check if buf is full
+				while (count == size)
+				;
+				// buf is not full
+				buf[in] = item;
+				in = (in+1)%size;
+				count++;
+			}
+			int remove() {
+				// check if buf is empty
+				while (count == 0)
+				;
+				// buf is not empty
+				int item = buf[out];
+				out = (out+1)%size;
+				count--;
+				return item;
+			}
+		}
+
+	- 잘못된 결과
+		1. 최종적으로 버퍼 내에는 0 개가 있어야 한다
+		2. 실행 불가, 또는
+		3. count != 0(생산된 항목 숫자 != 소비된 항목 숫자)
+
+	- 이유
+		1. 공통변수 count, buf[]에 대한 동시 업데이트
+		2. **공통변수 업데이트 구간(=임계구역)에 대한 동시 진입**
+
+	- 해결법
+		1. **임계구역에 대한 동시 접근 방지(상호배타)**
+		2. 세마포를 사용한 상호배타
+
+	- 위의 세마포를 사용하면 문제는 해결하지만 아직 해결하지 못한 부분이 있음
+		1. Busy-wait : 무한루프를 돌면서 대기한다
+			- 생산자 : 버퍼가 가득 차면 기다려야 = 빈(empty) 공간이 있어야
+			- 소비자 : 버퍼가 비민 기다려야 = 찬(full) 공간이 있어야
+		2. 세마포를 사용한 busy-wait 회피(새로운 세마포 2개추가)
+			- 생산자 : empty 세마포 (number of permit = BUF_SIZE)
+			- 소비자 : full 세마포 (number of permit = 0)
+
+			[생산자]										[소비자]
+			empty.acquire();					full.acquire();
+			PRODUCE;									CONSUME;
+			full.release();						empty.release();
+
+* Readers-Writers Problem
+	- 공통 데이터베이스
+		1. Readers : read data, never modify it
+		2. Writers : read data and modify it
+	- 상호배타 : 한번에 한개의 프로세스만 접근하는 것은 비효율적
+	- 리더는 동시에 접근해도 된다(데이터를 수정하지 않으므로)
+	- 리더가 접근하는 중에는 라이터는 접근 불가능
+
+* Dining Philosopher Program
+	- 식사하는 철학자 문제
+		1. 5명의 철학자, 5개의 젓가락, 생각->식사->생각->식사 ...
+		2. 식사하려면 2개의 젓가락 필요
+	- 프로그래밍
+		1. 젓가락 : 세마포(# of permit = 1)
+		2. 젓가락 세마포에 일련번호 : 0~4
+		3. 왼쪽 젓가락 -> 오른쪽 젓가락(왼쪽 젓가락 들고 그다음 오른쪽 젓가락 순으로)
+
+	- 잘못된 결과 : starvation
+		1. 모든 철학자가 식사를 하지 못해 굶어 죽는 현상
+		2. 동시에 배가 고파서 왼쪽 젓가락을 동시에 드는 경우
+	- 이유 = 교착상태(deadlock)
+
+### 10. 교착상태
+* deadlock
+	- 프로세스는 실행을 위해 여러 자원을 필요로 한다
+		1. CPU, 메모리, 파일, 프린터,....
+		2. 어떤 자원은 갖고 있으나 다른 자원은 갖지 못할 때 대기해야
+		3. **다른 프로세스 역시 다른 자원을 가지려고 대기할 때 교착상태 가능성**
+
+	- 교착상태 **필요조건**(아래 조건을 만족하면 교착상태가 발생할 수도 있다. 발생하지 않을 수도 있다)
+		1. 상호배타
+		2. 보유 및 대기
+		3. 비선점(No Preemption)
+		4. 환형대기
+
+* 자원(Resources)
+	- 동일자원
+		1. 동일 형식(type) 자원이 여러개 있을 수 있다
+		2. 예 : 동일 CPU 2개, 동일 프린터 3개 등
+	- 자원의 사용
+		1. 요청 -> 사용 -> 반납
+	- **자원 할당도**
+		1. 어떤 자원이 어떤 프로세스에게 할당되었는가?
+		2. 어떤 프로세스가 어떤 자원을 할당 받으려고 기다리고 있는가?
+		3. 자원 : 사각형, 프로세스 : 원, 할당 : 화살표
+
+	- 교착상태 필요조건
+		1. 자원 할당도 상에 화살표가 한방향으로 도는 원이 만들어져야 한다(환형대기)
+		2. 충분조건은 아님
+
+	- 예제 : 식사하는 철학자 문제
+		1. 원이 만들어지지 않게 하려면? 원을 만들지 않게 한다
+
+* 교착상태 처리
+	- 교착상태 방지
+	- 교착상태 회피
+	- 교착상태 검출 및 복구
+	- 교착상태 무시
+
+* 교착상태 방지
+	- 교착상태 4가지 필요조건 중 한 가지 이상 불만족시킨다
+		1. 상호배타
+			- 자원을 공유 가능하게하는 것은 원천적으로 불가능(적절한 방법이 아님)
+			- 예 : 젓가락을 공유하는 것은 불가능, 프린터를 공유하는 것은 불가능
+		2. 보유 및 대기(추천 방법)
+			- 자원을 가지고 있으면서 다른 자원을 기다리지 않게 한다
+			- 예: 자원이 없는 상태에서 모든 자원 대기, 일부 자원만 가용하면 보유 자원을 모두 놓아주기
+			- 단점 : 자원 활용률 저하, 기아
+		3. 비선점
+			- 자원을 선점 가능하게하는 것도 원천적으로 불가능(예 : 프린터)
+		4. 환형대기(추천 방법)
+			- 예 : 자원에 번호 부어하여 번호 오름차순으로 자원 요청(원을 만들어지지 않게 한다)
+			- 단점 : 자원 활용률 저하
+
+	* 교착상태 회피
+		- 교착상태 = 자원 요청에 대한 잘못된 승인
+		- 예제
+			1. 3개의 process가 12개의 magnetic tape를 활용
+				- Current needs는 1회에 필요한 자원, Max need는 연산을 끝내기 위해 총 필요한 자원
+			2. 안전한 할당
+			process						Max needs					Current needs
+				P0								10										5
+				P1								4											2
+				P2								9											2
+			3. 불안전한 할당
+			process						Max needs					Current needs
+				P0								10										5
+				P1								4											2
+				P2								9										**3**		
+		- 운영체제는 자원을 할당할 때 불안전 할당 되지 않도록
+				1. 불안전 할당 -> 교착상태
+
+* 교착상태 검출 및 복구
+	- 교착상태가 일어나는 것을 허용
+	- 주기적 검사
+	- 교착상태 발생 시 복구
+	- 검출
+		1. 검사에 따른 추가 부담: 계산, 메모리
+	- 복구
+		1. 프로세스 일부 강제 종료
+		2. 자원 선점하여 일부 프로세스에게 할당
+
+* 교착상태 무시
+	- 교착상태는 실제로 잘 일어나지 않는다!
+		1. 4가지 필요조건 모두 만족해도 잘 일어나지 않는다
+		2. 교착상태 발생 시 재시동
+
+
+---
+
+
+# 11. 모니터
+* 모니터
+	- 모니터
+		1. 세마포 이후 **프로세스 동기화 도구**
+		2. 세마포 보다 **고수준** 개념
+
+	- 구조
+		1. **공유자원+공유자원 접근함수**
+		2. **2개의 queues : 배타동기 + 조건동기**
+		3. 공유자원 접근함수에는 최대 1개의 쓰레드만 진입
+		4. 진입 쓰레드가 조건동기로 블록되면 새 쓰레드 진입가능
+		5. 새 쓰레드는 조건동기로 블록된 쓰레드를 깨울수 있다
+		6. 깨워진 쓰레드는 현재 쓰레드가 나가면 재진입할 수 있다
+
+* 자바 모니터
+	- 자바의 모든 객체는 모니터가 될 수 있다
+		1. 배타동기: Synchronized 키워드 사용하여 지정
+		2. 조건동기: wait(), notify(), notifyAll() 메소드 사용
+
+
+---
+
+
+# 12. 주기억장치 관리
+* 메모리 역사
+	- Core Memory
+	- 진공관 메모리
+	- 트랜지스터 메모리
+	- 집적회로 메모리:SRAM, DRAM
+
+* 언제나 부족한 메모리
+	- 프로그램 변천
+		1. 기계어/어셈블리어 작성
+		2. C언어 작성
+		3. 자바, 객체지향형 언어 작성
+		4. 숫자 처리->문자 처리-> 멀티미디어 처리-> Big Data
+
+	- 메모리 용량 증가 vs 프로그램 크기 증가
+		1. 언제나 부족한 메모리
+
+	- 어떻게 메모리를 효과적으로 사용할 수 있을까?
+		1. 메모리 낭비 없애기
+		2. 가상 메모리(virtual memory)
+
+* 프로그램을 메모리에 올리기
+	- 메모리 구조
+		1. 주소(Address)+데이터(Data)
+	- 프로그램 개발
+		1. 원천파일(Source file): 고수준언어 또는 어셈블리언어
+		2. 목적파일(Object file): 컴파일 또는 어셈블 결과
+		3. 실행파일(Executable file): 링크 결과
+	- 컴파일러, 어셈블러, 링터, 로더
+		1. Compiler, assenbler, linker, Loader
+	- 프로그램 실행: code + data + stack
+	- 실행파일을 메모리에 올리기(OS의 역할)
+		1. 메모리 몇 번지에?
+		2. 다중 프로그래밍 환경에서는?
+	- MMU 사용
+		1. 재배치 레지스터(Relocation register)
+		2. 프로그램이 메모리에 올라갈 때 항상 같은 번지수에 들어간다고 보장할 수 없다
+		3. CPU는 모든 프로그램이 0번지부터 실행된다고 인식한다
+		4. 그래서 CPU가 가리키는 메모리의 주소 번지수를 MMU가 보정해준다
+		5. 그 결과 메모리의 어떤 번지수에 프로그램이 올라가던지 CPU에서서는 항상 일정하게 가리킬 수 있게 만든다
+	- 주소 구분
+		1. 논리주소 vs 물리주소
+		2. CPU가 가리치는 주소 : 논리주소
+		3. 실제로 MMU를 통과한 후 메인메모리를 가리키는 주소 : 물리주소
+
+### 13. 메모리 낭비 방지
+* 동적 적재(Dynamic Loading)
+	- 프로그램 실행에 반드시 필요한 루틴/데이터만 적재
+		1. 모든 루틴이 다 사용되는 것이 아니다(예: 오류처리가 일어날 때 그 때 메모리에 올린다)
+		2. 모든 데이터가 다 사용되는 것이 아니다(예: 배열)
+		3. 자바: 모든 클래스가 다 사용되는 것은 아니다
+		4. 실행 시 필요하면 그때 해당 부분을 메모리에 올린다
+		- cf 정적 적재(Static loading)
+
+* 동적 연결(Dynamic Linking)
+	- 여러 프로그램에 공통 사용되는 라이브러리
+		1. 공통 라이브러리 루틴를 메모리에 중복으로 올리는 것은 낭비
+		2. 라이브러리 루틴 연결을 실행 시까지 미룬다(원래는 실행파일을 만들기 전에 링크가 수행된다)
+		3. 오직 하나의 라이브러리 루틴만 메모리에 적재되고,
+		4. 다른 애플리케이션 실행 시 이 루틴과 연결된다
+		- 예 : 여러 애플리케이션에서 공통으로 쓰이는 라이브러리는 일단 1개만 올리고 필요시에 추가로 링크한다
+	- 공유 라이브러리(shared library)-Linux
+	- 동적 연결 라이브러리(Dynamic linking library)DLL-Windows
+
+* Swapping
+	- 메모리에 적재되어 있으나 현재 사용되지 않고 있는 프로세스 이미지
+		1. 메모리 활용도를 높이기 위해 Backing store(hdd의 기존 프로그램이 저장되어 있는 장소가 아니라 별도의 장소)로 몰아내기
+		2. swap-out vs swap-in
+		3. Relocation register 사용으로 적재 위치는 무관
+		4. 프로세스 크기가 크면 backing store 입출력에 따른 부담이 큼
+		5. backing store는 대략 사용 컴퓨터의 ram 크기 만큼 지정
