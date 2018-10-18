@@ -1061,7 +1061,7 @@ date:   2018-10-12 19:51:02 +0900
 
 	- 하드웨어 지원
 		1. valid 비트 추가된 페이지 테이블(아직 메모리에 올라가지 않은 페이지를 구분하는 비트)
-		2. backing store(=swap device)
+		2. backing store(=swap device) 필요
 
 * Page Fault
 	- 페이지 결함(페이지 부재)
@@ -1110,7 +1110,7 @@ date:   2018-10-12 19:51:02 +0900
 ---
 
 
-### 18. 페이지 교체
+### 18. 페이지 교체(page replacement)
 * Demand paging
 	- 요구되어지는 페이지만 backing store에서 가져온다
 	- 프로그램 실행이 계속됨에 따라 요구 페이지가 늘어나고
@@ -1138,4 +1138,135 @@ date:   2018-10-12 19:51:02 +0900
 		1. CPU가 내는 주소 : 100 101 102 432 612 103 104 611 612
 		2. Page size = 100 바이트라면
 		3. 페이지 번호 = 1(1페이지이고 오프셋 0) 1(1페이지이고 오프셋1) 1 4 6 1 1 6 6
-		4. Page reference string = 1 4 6 1 6 (연속되는 페이지는 페이지 부재가 일어나지 않으므로 생략)
+		4. Page reference string(페이지 참조열) = 1 4 6 1 6 (연속되는 페이지는 페이지 부재가 일어나지 않으므로 생략)
+		5. 만약 100번지에서 페이지 폴트가 발생했다면 100번지부터 199번지까지 페이지를 메모리에 올리므로 앞으로 같은 페이지의 주소는 페이지 폴트가 일어나지 않는다
+
+* First-In First-Out(FIFO)
+	- Simplest
+		1. Idea : 초기화 코드는 더 이상 사용되지 않을 것
+		2. 초기화 코드는 처음에 사용되므로 처음에 메모리 부족시 들어온 페이지먼저 뺀다
+
+	- 예제
+		1. 페이지 참조열 = 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
+		2. # of frames = 3
+		3. **15 page faults**
+
+	- Belady's Anomaly
+		1. 프레임 수(=메모리 용량) 증가하는데 페이지폴트 횟수 증가? 보통은 프레임수가 증가하면 페이지 폴스가 감소
+		2. 페이지 참조열이 특정한 경우 FIFO를 사용하면 페이지 폴드 횟수가 증가하는 부분이 발생한다
+
+* OPtimal(OPT)
+	- Victim으로 나간 페이지가 다시 들어오는 경우를 최소화(FIFO로 하면 페이지폴트가 많이 발생)
+
+	- 이후에 가장 오랜시간 동안 사용되지 않을 페이지를 victim으로 교체하자
+
+	- 예제
+		1. 페이지 참조열 = 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
+		2. # of frames = 3
+		3. **9 page faults**
+
+	- 비현실적임
+		1. 미래는 알 수 없다!
+		2. cf SJF CPU scheduling algorithm(어떤 작업이 가장 짧을지 알 수 없다)
+
+* Least-Recently-Used(LRU)
+	- 과거로 미래를 짐작
+
+	- 최근 가장 오래전에 사용된 페이지를 victim으로 선택
+
+	- 최근에 사용되지 않으면 나중에도 사용되지 않을 것이라고 예상
+
+	- 예제
+		1. 페이지 참조열 =  7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
+		2. # of frames = 3
+		3. 12 page faults
+
+* Global vs Local replacement
+	- Global replacement
+		1. 메모리 상의 모든 프로세스 페이지에 대해 교체
+
+	- Local replacement
+		1. 메모리 상의 자기 프로세스 페이지에 대해 교체
+
+	- 성능 비교
+		1. Global replacement가 더 효율적일 수 있다
+
+
+---
+
+
+### 19. 프레임 할당
+* 쓰레싱(Thrashing)
+	- CPU utilization(CPU 이용률) vs Degree of Multiprogramming
+		1. 프로세스 개수 증가 -> CPU 이용률 증가
+		2. 일정 범위를 넘어서면 CPU 이용률 감소
+		3. 이유 : 빈번한 page in/out(꽉찬 메모리에 새로운 페이지가 빈번하게 in out되는 시간 그동안 CPU가 일을 하지 않는다)
+		4. **Thrashing** : i/o 시간 증가 때문
+
+	- 쓰레싱 극복
+		1. Global replacement 보다는 Local replacement 이용
+		2. 프로세스당 **충분한/적절한** 수의 메모리 할당
+
+* 프레임 할당
+	- 정적 할당
+		1. 균등 할당 : 프로세스당 프레임을 동일하게 할당
+		2. 비례 할당 : 프로세스의 크기에 비례하여 프레임을 할당
+
+	- 동적 할당
+		1. Working set model
+		2. Page fault frequency
+		3. etc
+
+* 동적 프레임 할당
+	- Working set model
+		1. **Locality(집약성)** vs **working set**
+			- 미래의 집약성은 알기 힘들다
+			- 과거의 집약성을 보고 미래의 집약성을 판단
+		2. Working set window : working set 기준 시간
+		3. Working set 크기 만큼의 프레임 할당
+
+	- Page-Fault frequency(PFF)
+		1. Page fault 발생 비율의 상한/ 하한선
+		2. 상한선 초과 프로세스에 더 많은 프레임 할당
+		3. 하한선 이하 프로세스의 프레임의 회수
+
+
+---
+
+
+### 20. 페이지 크기
+* Page Size
+	- 페이지 크기
+		1. 일반적 크기 : 4KB ~ 4MB
+		2. 점차 커지는 경향
+
+	- 페이지 크기 영향
+		1. 내부 단편화(페이지 크기가 크면 내부단편화가 크다)
+		2. Page-in, page-out 시간(HDD에서 seek타임이 오래걸리므로 한번 읽는데 페이지가 클수록 시간이 적게 든다)
+		3. 페이지 테이블 크기(페이지가 크면 페이지의 갯수가 감소하므로 페이지 테이블의 크기도 작다)
+		4. Memory resolution(페이지가 작을 수록 해상도가 증가, 한 페이지에 원하는 부분의 비율이 크므로)
+		5. Page fault 발생 확률(페이지가 크면 페이지 폴트가 적게 일어난다, 일반적으로 한번 페이지 폴트가 발생해서 메모리에 페이지가 올라가면 다음에 실행하는 부분은 페이지의 근처일 확률이 크다 그래서 페이지가 클 수록 페이지 폴트가 적게 발생)
+
+
+---
+
+
+### 21. 파일 할당(File Allocation)
+* 파일할당
+	- CPU : **프로세스 관리** (CPU 스케줄링, 프로세스 동기화)
+	- 주기억장치 : **메인 메모리 관리** (페이징, 가상 메모리)
+	- 보조기억장치 : **파일 시스템**
+
+* 보조기억장치(하드 디스크)
+	- 하드디스크 : track, Sector
+	- sector size = 512bytes
+	- block : sector를 여러개 합친 단위
+	- 블록단위의 읽기/쓰기(block device)
+	- 빈 디스크 = pool of free blocks
+	- **각각의 파일에 대해 free block을 어떻게 할당해줄까?**
+
+* 파일 할당
+	- 파일 할당
+		1. 연속 할당(Contiguous Allocation)
+		2. 연결 할당(Linked Allocation)
+		3. 색인 할당(Indexed Allocation)
