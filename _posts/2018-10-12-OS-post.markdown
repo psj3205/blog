@@ -430,7 +430,7 @@ date:   2018-10-12 19:51:02 +0900
 
 
 ---
-
+<!--
 
 ### 8. 쓰레드(Thread)
 * Thread?
@@ -636,7 +636,7 @@ date:   2018-10-12 19:51:02 +0900
 	- 위의 세마포를 사용하면 문제는 해결하지만 아직 해결하지 못한 부분이 있음
 		1. Busy-wait : 무한루프를 돌면서 대기한다
 			- 생산자 : 버퍼가 가득 차면 기다려야 = 빈(empty) 공간이 있어야
-			- 소비자 : 버퍼가 비민 기다려야 = 찬(full) 공간이 있어야
+			- 소비자 : 버퍼가 비면 기다려야 = 찬(full) 공간이 있어야
 		2. 세마포를 사용한 busy-wait 회피(새로운 세마포 2개추가)
 			- 생산자 : empty 세마포 (number of permit = BUF_SIZE)
 			- 소비자 : full 세마포 (number of permit = 0)
@@ -778,7 +778,7 @@ date:   2018-10-12 19:51:02 +0900
 * 자바 모니터
 	- 자바의 모든 객체는 모니터가 될 수 있다
 		1. 배타동기: Synchronized 키워드 사용하여 지정
-		2. 조건동기: wait(), notify(), notifyAll() 메소드 사용
+		2. 조건동기: wait(), notify(), notifyAll() 메소드 사용 -->
 
 
 ---
@@ -808,22 +808,28 @@ date:   2018-10-12 19:51:02 +0900
 * 프로그램을 메모리에 올리기
 	- 메모리 구조
 		1. 주소(Address)+데이터(Data)
+
 	- 프로그램 개발
 		1. 원천파일(Source file): 고수준언어 또는 어셈블리언어
 		2. 목적파일(Object file): 컴파일 또는 어셈블 결과
 		3. 실행파일(Executable file): 링크 결과
+
 	- 컴파일러, 어셈블러, 링터, 로더
 		1. Compiler, assenbler, linker, Loader
+
 	- 프로그램 실행: code + data + stack
+
 	- 실행파일을 메모리에 올리기(OS의 역할)
 		1. 메모리 몇 번지에?
 		2. 다중 프로그래밍 환경에서는?
+
 	- MMU 사용
 		1. 재배치 레지스터(Relocation register)
 		2. 프로그램이 메모리에 올라갈 때 항상 같은 번지수에 들어간다고 보장할 수 없다
 		3. CPU는 모든 프로그램이 0번지부터 실행된다고 인식한다
 		4. 그래서 CPU가 가리키는 메모리의 주소 번지수를 MMU가 보정해준다
 		5. 그 결과 메모리의 어떤 번지수에 프로그램이 올라가던지 CPU에서서는 항상 일정하게 가리킬 수 있게 만든다
+
 	- 주소 구분
 		1. 논리주소 vs 물리주소
 		2. CPU가 가리치는 주소 : 논리주소
@@ -938,8 +944,8 @@ date:   2018-10-12 19:51:02 +0900
 		3. 상위 m-n 비트는 페이지 번호
 
 	- 주소변환 : 논리주소->물리주소(Physical address)
-		1. 페이지 번호(p)는 페이지 테이블 인덱스 값
-		2. p에 해당되는 테이블 내용이 프레임 번호(f)
+		1. **페이지 번호(p)는 페이지 테이블 인덱스 값**
+		2. **p에 해당되는 테이블 내용이 프레임 번호(f)**
 
 	- 예제
 		1. Page Size = 4 bytes
@@ -1151,7 +1157,7 @@ date:   2018-10-12 19:51:02 +0900
 		2. # of frames = 3
 		3. **15 page faults**
 
-	- Belady's Anomaly
+	- Belady's Anomaly(벨레이디의 모순)
 		1. 프레임 수(=메모리 용량) 증가하는데 페이지폴트 횟수 증가? 보통은 프레임수가 증가하면 페이지 폴스가 감소
 		2. 페이지 참조열이 특정한 경우 FIFO를 사용하면 페이지 폴드 횟수가 증가하는 부분이 발생한다
 
@@ -1270,3 +1276,139 @@ date:   2018-10-12 19:51:02 +0900
 		1. 연속 할당(Contiguous Allocation)
 		2. 연결 할당(Linked Allocation)
 		3. 색인 할당(Indexed Allocation)
+
+* 연속 할당
+	- Contiguous Allocation(배열의 특징과 같다)
+		1. 각 파일에 대해 디스크 상의 **연속된 블록** 을 할당
+		2. 장점 : 디스크 헤더의 이동 최소화 = 빠른 i/o 성능
+		3. 옛날 IBM VM/CMS에서 사용
+		4. 동영상, 음악, VOD 등에서 적합(용량이 큰 파일이 블록이 흩어져서 할당되어 있다면 헤더의 이동이 많아진다)
+		5. 순서적으로 읽을 수도 있고(sequential access 순차접근)
+		6. 특정 부분을 바로 읽을 수도 있다(direct access 직접접근)
+		7. 파일이 삭제되면 hole 생성
+		8. 파일 생성/삭제 반복되면 곳곳에 흩어지는 holes
+		9. 새로운 파일을 어느 hole에 둘 것인가? 외부단편화
+			- First, Best, Worst-fit
+		10. 단점 : 외부 단편화로 인한 디스크 공간 낭비
+			- Compaction 할 수 있지만 시간이 오래 걸린다
+		11. 파일 생성 당시 이 파일의 **크기를 알 수 없다**(문서의 경우 계속 용량이 늘어날 수 있으므로)->파일을 어느 hole에?
+		12. 파일의 크기가 **계속 증가할 수 있다**->기존의 hole배치로는 불가!
+		13. 어떻게 해결할 수 있을까?
+
+* 연결 할당
+	- Linked Allocation(연결리스트의 특징과 같다)
+		1. 파일 = linked list of data blocks
+		2. 파일 디렉토리(os에서 파일을 관리하는 부분)는 제일 처음 블록을 가리킨다
+		3. 각 블록은 포인터 저장을 위한 4바이트 또는 이상 소모하고 다음 블록을 가리킨다
+
+	- 새로운 파일 만들기
+		1. 비어있는 임의의 블록을 첫 블록으로
+		2. 파일이 커지면 다른 블록을 할당 받고 연결
+		3. **외부 단편화 없음!**
+
+	- 단점
+		1. 순서대로 읽기(sequential access)는 가능하지만
+		2. Direct access는 불가능
+		3. 포인터 저장 위해 4바이트 이상 손실
+		4. 낮은 신뢰성: 포인터 끊어지면 이하 블록 접근 불가
+		5. 느린 속도 : 헤더의 움직임
+
+	- 개선 : **FAT 파일 시스템**
+		1. File Allocation Table 파일 시스템
+		2. MS-DOS, OS/2, Windows 등에서 사용
+		3. 각 블록의 끝에 포인터를 저장하는 것이 아니라 포인터들만 모은 테이블(FAT)을 별도로 블록에 저장
+		4. FAT 손실 시 복구 위해 **이중 저장**
+		5. **Direct access** 도 가능!
+		6. FAT는 일반적으로 메모리 캐싱
+
+* 색인 할당
+	- Indexed Allocation
+		1. 한 파일 당 **한 개의 인덱스 블록**
+		2. 인덱스 블록은 **포인터의 모음**
+		3. 디렉토리는 인덱스 블록을 가리킨다
+		4. Unix/Linux 등에서 사용
+
+	- 장점
+		1. sequential access 가능
+		2. Direct access 가능
+		3. 외부 단편화 없음
+
+	- 단점
+		1. 인덱스 블록 할당에 따른 **저장공간 손실**
+		2. 예 : 1바이트 파일을 위해 데이터 1블록 + 인덱스 1블록
+
+	- **파일의 최대 크기**
+		1. 예제 : 1블록 = 512바이트 = 4바이트 * 128개 인덱스
+			- 128 * 512바이트 = 64KB -> 최대 64KB까지 가능
+		2. 예제 : 1블록 = 1KB = 4바이트 * 256개 인덱스
+			- 256 * 1KB = 256KB -> 최대 256KB까지 가능
+		3. **해결방법** : Linked, Multilevel index, Combined 등
+
+
+---
+
+
+### 22. 디스크 스케줄링
+* 디스크 스케쥴링
+	- 디스크 접근 시간
+		1. **Seek time** + Rotational delay + Transfer time
+		2. 탐색시간이 가장 크다
+
+	- 다중 프로그래밍 환경
+		1. 디스크 큐(disk queue)에는 많은 요청들이 쌓여있다
+		2. 요청들을 어떻게 처리하면 **탐색시간을 줄일 수** 있을까?
+
+	- 디스크 스케쥴링 알고리즘
+		1. FCFS(First-Come First-Served)
+		2. ???
+
+* FCFS Scheduling
+	- First-Come First-Served
+		1. Simple and Fair
+
+	- 예제
+		1. 200 cylinder disk, 0 ~ 199
+		2. Disk queue: 98 183 37 122 14 124 65 67
+		3. Head is currently at cylinder 53
+		4. Total head movement =640 cylinders
+		5. 53->98-> 183->37->122->14->124->65->67
+		6. 이동거리 = (183-53)+(183-37)+(122-37)+(122-14)+(124-14)+(124-65)+(67-65) = 640 cylinders
+		7. 효율적이지 않음
+
+* SSTF Scheduling
+	- Shortest-Seek-Time-First
+		1. 현재 헤더 위치에서 헤더를 가장 적게 이동하여 찾을 수 있는 곳으로 먼저 간다
+
+	- 예제
+		1. 200 cylinder disk, 0~199
+		2. Disk queue: 98 183 37 122 14 124 65 67
+		3. Head is currently at cylinder 53
+		4. Total head movement = 236 cylinders
+
+	- 문제점
+		1. starvation(Disk queue에는 새로운 요청들이 계속들어오므로 헤더에서 멀리 떨어져있는 요청은 아무리 기다려도 차례가 오지 않을 수도 있다)
+		2. Is SSTF optimal? **No!**(e.g., 53->37->... = 208 cyl)
+
+* SCAN Scheduling
+	- Scan Disk
+		1. 헤더가 연속적으로 앞뒤로 움직이면서 디스크 전체에 걸쳐 스캔한다(헤더가 안쪽으로 끝가지 들어갔다가 나온다, 바깥쪽 먼저 갈 수도 있다)
+
+	- 예제
+		1. 200 cylinder disk, 0~199
+		2. Disk queue: 98 183 37 122 14 124 65 67
+		3. Head is currently at cylinder 53(moving toward 0)
+		4. Total head movement = 53 + 183 cylinders
+
+	- **Circular SCAN** is necessary
+
+* Scan Variants(스캔알고리즘 변종)
+	- C-Scan
+		1. 한 방향으로 끝까지 가면서 요청을 처리하고 반대방향으로 나오면서 요청을 처리하는 것이 아니라 바로 반대 끝까지 한번에 이동 후 반대 끝에서부터 다시 안쪽으로 움직이면서 요청을 처리하는 방식
+		2. 움직인 거리는 일반 Scan scheduling보다 커도 실행 시간은 짧다
+	- LOOK
+		1. 움직이는 방향의 마지막 요청까지만 움직인다(가장 안쪽까지 갈필요 없다)
+	- C-LOOK
+		1. LOOK version of C-SCAN
+
+* Elevator algorithms
+	- SCAN and Variants 알고리즘은 엘리베이터 알고리즘이라고도 불린다
