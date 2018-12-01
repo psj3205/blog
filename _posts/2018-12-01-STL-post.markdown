@@ -46,9 +46,25 @@ date:   2018-12-01 14:21:02 +0900
 	- map 컨테이너는 원소를 key와 value의 쌍으로 저장
 	- set처럼 원소의 key는 컨테이너에 중복 저장될 수 없으며 중복 key를 저장해야 한다면 multimap을 이용
 	- map은 set처럼 컨테이너에 원소를 삽입하는 유일한 멤버함수 insert()를 제공
+	- at(), [] 연산자 제공, 다른 연관 컨테이너들은 없음
 
 * multimap 컨테이너
 	- multimap 컨테이너는 중복 key를 컨테이너에 저장할 수 있다는 것 외에는 map과 동일
+
+---
+
+### 11. 컨테이너 어탭터
+* 컨테이너 어뎁터
+	- 컨테이너 어뎁터는 다른 컨테이너의 인터페이스를 변경한 컨테이너
+	- STL에는 stack, queue, priority_queue 세 가지 컨테이너 어뎁터가 있다
+
+* stack 컨테이너
+
+* queue 컨테이너
+
+* priority queue 컨테이너
+	- priority queue와 set의 차이
+		1. priority queue는 오직 pop하는 값만 알 수 있지만 set은 다른 원소들에 접근이 가능
 
 ---
 
