@@ -293,10 +293,10 @@ date:   2018-10-12 19:51:02 +0900
 * CPU Scheduling Algorithms
 	- First-Come, First-Served(FCFS)
 	- Shortest-Job-First(SJF)
-	-	Priority
-	-	Round-Robin (RR)
-	-	Multilevel Queue
-	-	Multilevel Feedback Queue
+	- Priority
+	- Round-Robin (RR)
+	- Multilevel Queue
+	- Multilevel Feedback Queue
 
 * First-Come, First-Served(FCFS)
 	- Simple & Fair
