@@ -9,7 +9,7 @@ date:   2019-10-14 18:25:02 +0900
   - 리엑트에서 컴포넌트를 선언하는 방식은 **두가지**
     - **함수형 컴포넌트**
 
-      ```javascript
+      ```jsx
       import React from 'react';
       import './App.css';
 
@@ -23,7 +23,7 @@ date:   2019-10-14 18:25:02 +0900
 
     - **클래스형 컴포넌트**
       
-      ```javascript
+      ```jsx
       import React, {Component} from 'react';
 
       class App extends Component {
@@ -49,7 +49,7 @@ date:   2019-10-14 18:25:02 +0900
 
 ## 3.3 props
   - **`props`란?**
-      ```javascript
+      ```jsx
       import React from 'react';
 
       const MyComponent = props => {
@@ -65,7 +65,7 @@ date:   2019-10-14 18:25:02 +0900
   - **함수형 컴포넌트**
     - **함수형 컴포넌트**에서 비구조화 할당 문법으로 `props` 사용하기
     
-      ```javascript
+      ```jsx
       import React from 'react';
   
       const MyComponent = ({ name, children }) => {
@@ -85,7 +85,7 @@ date:   2019-10-14 18:25:02 +0900
   - **클래스형 컴포넌트**
     - **클래스형 컴포넌트**에서 비구조화 할당 문법으로 `props` 사용하기
     
-      ```javascript
+      ```jsx
       import React, {Component} from 'react';
     
       class MyComponent extends Component {
@@ -111,7 +111,7 @@ date:   2019-10-14 18:25:02 +0900
     - **함수형 컴포넌트와 클래스형 컴포넌트**에서 `state`의 사용방식이 다름
     
   - **클래스형 컴포넌트의 `state`**
-    ```javascript
+    ```jsx
     import React, {Component} from 'react';
     
     class Counter extends Component {
@@ -143,7 +143,7 @@ date:   2019-10-14 18:25:02 +0900
     - `this.setState` 함수로 `state`의 값을 변경할 수 있다.
 
   - **함수형 컴포넌트의 `state`**
-    ```javascript
+    ```jsx
     import React, {Component} from 'react';
       
     const Say = () =>{
@@ -174,7 +174,7 @@ date:   2019-10-14 18:25:02 +0900
  
 ## 4.2 이벤트 핸들링 익히기
   - **클래스형 컴포넌트**에서 이벤트 핸들링
-    ```javascript
+    ```jsx
     import React, {Component} from 'react';
     
     class EventPractice extends Component {
@@ -218,7 +218,7 @@ date:   2019-10-14 18:25:02 +0900
 
 
   - **함수형 컴포넌트**에서 이벤트 핸들링
-    ```javascript
+    ```jsx
     import React, {Component} from 'react';
       
     const EventPractice = () => {
@@ -257,7 +257,7 @@ date:   2019-10-14 18:25:02 +0900
   - **`ref`는 DOM을 꼭 직접적으로 건드려야 할 때 사용**
   - `ref`를 사용하는 방법은 **두 가지** 
     - **콜백함수**를 사용하여 `ref`를 만드는 방법
-      ```javascript
+      ```jsx
       import React, { Component } from 'react';
       import './ValidationSample.css';
 
@@ -299,7 +299,7 @@ date:   2019-10-14 18:25:02 +0900
       - 함수 내부에서 전달받은 `ref`를 컴포넌트의 맴버함수에 할당한다.
       
     - **createRef** 함수를 사용하여 `ref`를 만드는 방법
-      ```javascript
+      ```jsx
       import React, {Component} from 'react';
       
       class RefSample extends Component {
@@ -326,7 +326,7 @@ date:   2019-10-14 18:25:02 +0900
 ## 5.3 컴포넌트에 ref 달기
   - 리액트에서는 컴포넌트에도 `ref`를 달 수 있음
   - 컴포넌트 내부에 있는 DOM를 컴포넌트 외부에서 접근 가능
-    ```javascript
+    ```jsx
     import React, {Component} from 'react';
     import ScrollBox from './ScrollBox';
 
