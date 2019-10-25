@@ -1,0 +1,348 @@
+---
+layout: post
+title:  "리엑트를 다루는 기술 3장 정리"
+date:   2019-10-14 18:25:02 +0900
+---
+
+# 3. 컴포넌트
+## 3.1 클래스형 컴포넌트
+  - 리엑트에서 컴포넌트를 선언하는 방식은 **두가지**
+    - **함수형 컴포넌트**
+
+      ```javascript
+      import React from 'react';
+      import './App.css';
+
+      function App() {
+        const name = 'react';
+        return <div className = "react">{name}</div>
+      }
+
+      export default App;
+      ```
+
+    - **클래스형 컴포넌트**
+      
+      ```javascript
+      import React, {Component} from 'react';
+
+      class App extends Component {
+        render() {
+          const name = 'react';
+          return <div className="react">{name}</div>
+        }
+      }
+
+      export default App;
+      ```
+
+  - **함수형, 클래스형** 컴포넌트의 차이점
+    - 클래스형 컴포넌트 
+      - `state` 기능 및 `라이프 사이클` 기능을 사용할 수 **있음.**
+      - 임의 메서드를 정의할 수 있음.
+      - `render` 함수가 반드시 필요.
+    - 함수형 컴포넌트
+      - `state` 기능 및 `라이프 사이클` 기능을 사용할 수 **없음.**
+      - 리액트 버전 16.8부터 `Hook`을 이용해 클래스를 작성하지 않고도 위의 단점을 보안
+      - 클레스형 컴포넌트보다 간단함.
+      - 클래스형 컴포넌트보다 **메모리자원을 적게 사용함.**
+
+## 3.3 props
+  - **`props`란?**
+      ```javascript
+      import React from 'react';
+
+      const MyComponent = props => {
+        return <div>안녕하세요 제 이름은 {props.name}입니다.</div>
+      };
+    
+      export default MyComponent;
+      ```
+    - `props`는 컴포넌트의 속성을 설정할 때 사용하는 요소
+    - `props`는 JSX 내부에서 ``{ }`` 기호 안에 넣어 렌더링한다.
+
+
+  - **함수형 컴포넌트**
+    - **함수형 컴포넌트**에서 비구조화 할당 문법으로 `props` 사용하기
+    
+      ```javascript
+      import React from 'react';
+  
+      const MyComponent = ({ name, children }) => {
+        return (
+          <div>
+            안녕하세요 제 이름은 {name}입니다.<br />
+            children 값은 {children}입니다.
+          </div>
+          );
+      };
+      
+      export default MyComponent;    
+      ```
+      - **비구조화 할당**을 사용하면 `props`의 값을 더 편리하게 할당 가능
+      - 함수의 파라미터가 객체라면 그 값을 바로 비구조화해서 사용가능      
+    
+  - **클래스형 컴포넌트**
+    - **클래스형 컴포넌트**에서 비구조화 할당 문법으로 `props` 사용하기
+    
+      ```javascript
+      import React, {Component} from 'react';
+    
+      class MyComponent extends Component {
+        render(){
+          const {name, favoriteNumber, children} = this.props;
+          return (
+            <div>
+              안녕하세요, 제 이름은 {name}입니다.<br/>
+              children 값은 {children}입니다.<br/>
+              제가 좋아하는 숫자는 {favoriteNumber}입니다.
+            </div>
+          );
+        }
+      }
+      export default MyComponent;
+      ```
+      - `render` 함수에서 `this.props`를 조회한다.
+    
+## 3.4 state
+  - **`state`란?**
+    - `props`는 부모 컴포넌트가 설정한 값을 **컴포넌트 내부에서 읽기만 가능한 값**
+    - 하지만 `state`는 **컴포넌트 내부에서 바뀔 수 있는 값을 의미**
+    - **함수형 컴포넌트와 클래스형 컴포넌트**에서 `state`의 사용방식이 다름
+    
+  - **클래스형 컴포넌트의 `state`**
+    ```javascript
+    import React, {Component} from 'react';
+    
+    class Counter extends Component {
+      state = {
+        number:0,
+        fixedNumber:0
+      };
+      render(){
+        const {number, fixedNumber} = this.state;
+        return (
+          <div>
+            <h1>{number}</h1>
+            <button
+              onClick={()=>{
+                this.setState({number:number+1});
+              }}
+            >
+            +1
+            </button>
+          </div>
+        );
+      }
+    }
+    export default Counter;
+    ```
+    - `constructor` 안에서 `this.state` 값에 초깃값을 설정할 수도 있고
+    - `constructor` 없이 바로 `state` 초기값을 설정할 수 있다.
+    - 클래스형 컴포넌트의 `state`는 **객체 형식**이어야 한다.
+    - `this.setState` 함수로 `state`의 값을 변경할 수 있다.
+
+  - **함수형 컴포넌트의 `state`**
+    ```javascript
+    import React, {Component} from 'react';
+      
+    const Say = () =>{
+      const [message, setMessage] = useState('');
+      const onClickEnter = () => setMessage('안녕하세요!');
+      const onClickLeave = () => setMessage('안녕히 가세요!');
+        
+      return (
+        <div>
+          <button onClick={onClickEnter}>입장</button>
+          <button onClick={onClickLeave}>퇴장</button>
+          <h1>{message}</h1>
+        </div>
+      );
+    };
+    export default Say;
+    ```
+    - 함수형 컴포넌트에서는 `useState` 함수로 `state`를 사용한다.
+    - `useState` 함수를 호출하면 배열이 반환되는데 첫 번째 원소는 **현재 상태**
+    - 두 번째 원소는 **상태를 바꾸어 주는 함수**이다.
+    
+---
+# 4. 이벤트 핸들링
+## 4.1 이벤트 시스템
+  - 이벤트 이름은 **카멜 표기법**으로 작성한다.
+  - 이벤트에 **함수 형태**의 객체를 전달한다.
+  - 이벤트는 **DOM 요소**에만 설정할 수 있다.
+ 
+## 4.2 이벤트 핸들링 익히기
+  - **클래스형 컴포넌트**에서 이벤트 핸들링
+    ```javascript
+    import React, {Component} from 'react';
+    
+    class EventPractice extends Component {
+      state = {
+        message:''
+      }
+      
+      handleChange = e => {
+        this.setState({
+          message: e.target.value
+        });
+      }
+      
+      handleClick = () => {
+        alert(this.state.message);
+        this.setState({
+          message:''
+        });
+      }
+      
+      render() {
+        return (
+          <div>
+            <h1>이벤트 연습</h1>
+            <input
+              type="text"
+              name="message"
+              placeholder="아무거나 입력해 보세요"
+              value={this.state.message}
+              onChange={this.handleChange}
+            />
+            <button onClick={this.handleCilck}>확인</button>
+          </div>
+        );
+      }
+    }
+    export default EventPractice;
+    ```
+    - 입력창에 값을 입력할 때마다 `handleChange` 이벤트가 실행되어 `state`의 `message` 값을 변경한다.
+    - 확인 버튼을 누므면 `handleClick` 이벤트가 실행되어 alert 창이 뜨고 입력창은 비워진다.
+
+
+  - **함수형 컴포넌트**에서 이벤트 핸들링
+    ```javascript
+    import React, {Component} from 'react';
+      
+    const EventPractice = () => {
+      const [message, setMessage] = useState('');
+      const onChangeMessage = e => setMessage(e.target.value);
+      const onClick = () => {
+        alert(message);
+        setMessage('');
+      };
+      const onKeyPress = e => {
+        if(e.key === 'Enter'){
+          onClick();
+        }
+      };
+      return (
+        <div>
+          <h1>이벤트 연습</h1>
+          <input
+            type="text"
+            name="message"
+            placeholder="아무거나 입력해보세요"
+            value={message}
+            onChange={onChangeMessage}
+            onKeyPress={onKeyPress}
+          />
+          <button onClick={onClick}>확인</button>
+        </div>
+      );
+    };
+    export default EventPractice;
+    ```
+    
+---
+# 5. ref: DOM에 이름 달기
+## 5.1 ref 사용하기
+  - **`ref`는 DOM을 꼭 직접적으로 건드려야 할 때 사용**
+  - `ref`를 사용하는 방법은 **두 가지** 
+    - **콜백함수**를 사용하여 `ref`를 만드는 방법
+      ```javascript
+      import React, { Component } from 'react';
+      import './ValidationSample.css';
+
+      class ValidationSample extends Component {
+        state = {
+          password: '',
+          clicked: false,
+          validated: false
+        };
+
+        handleChange = (e) => {...};
+
+        handleButtonClick = () => {
+          this.setState({
+            clicked: true,
+            validated: this.state.password === '0000'
+          });
+          this.input.focus();
+        };
+
+        render() {
+          return (
+            <div>
+              <input
+                ref={(ref) => this.input = ref}
+                type="password"
+                value={this.state.password}
+                onChange={this.handleChange}
+                className={...} />
+              <button onClick={this.handleButtonClick}>검증하기</button>
+            </div>
+          );
+        }
+      }
+
+      export default ValidationSample;  
+      ```
+      - `ref`를 달고자 하는 DOM요소에 `ref` 콜백함수를 `props`로 전달한다.
+      - 함수 내부에서 전달받은 `ref`를 컴포넌트의 맴버함수에 할당한다.
+      
+    - **createRef** 함수를 사용하여 `ref`를 만드는 방법
+      ```javascript
+      import React, {Component} from 'react';
+      
+      class RefSample extends Component {
+        input = React.createRef();
+        
+        handleFocus = () => {
+          this.input.current.focus();
+        }
+        
+        render() {
+          return (
+            <div>
+              <input ref = {this.input} />
+            </div>
+          );
+        }
+      }
+      export default RefSample;
+      ```
+      - 컴포넌트 내부에 맴버 변수를 생성하고 `React.createRef()`를 할당한다.
+      - 그리고 맴버 변수를 ref를 달고자 하는 DOM 요소에 `ref props`로 지정해준다
+      - `ref`가 달린 DOM 요소에 접근하기 위해서는 `this.input.current`와 같은 방식으로 접근한다.
+
+## 5.3 컴포넌트에 ref 달기
+  - 리액트에서는 컴포넌트에도 `ref`를 달 수 있음
+  - 컴포넌트 내부에 있는 DOM를 컴포넌트 외부에서 접근 가능
+    ```javascript
+    import React, {Component} from 'react';
+    import ScrollBox from './ScrollBox';
+
+    class App extends Component {
+      render(){
+        return (
+          <div>
+            <ScrollBox ref={(ref) => this.ScrollBox = ref}></ScrollBox>
+            <button 
+              onClick={() => this.ScrollBox.scrollToBottom()}>
+              맨 밑으로
+            </button>
+          </div>
+        );
+      }
+    };
+
+    export default App;
+    ```

@@ -1,0 +1,258 @@
+---
+layout: post
+title:  "리엑트를 다루는 기술 6장 정리"
+date:   2019-10-24 10:43:02 +0900
+---
+
+# 6. 컴포넌트 반복
+## 6.1 자바스크립트 배열의 `map()` 함수
+  ```jsx
+  import React from 'react';
+  
+  const IterationSample = () => {
+    const names = ['눈사람', '얼음', '눈', '바람'];
+    const nameList = names.map((name, index)=><li key={index}>{name}</li>);
+    return <ul>{nameList}</ul>
+  };
+  
+  export default IterationSample;
+  ```
+  - `map()`함수를 이용하여 **반복되는 컴포넌트를 렌더링**할 수 있음
+ 
+## 6.2 key
+  - 컴포넌트 배열을 렌더링했을 때 **어떤 원소에 변동이 있었는지** 알아내기 위해 `key`를 사용
+  - `key`가 없으면 Virtual DOM을 비교하는 과정에서 리스트를 순차적으로 비교함
+  - `key`가 있으면 어떤 변화가 일어났는지 **더욱 빠르게** 알 수 있음
+  - `key` 값은 항상 유일
+  - 상태 안에서 반복되는 배열을 수정할 경우에는 `concat`, `filter` 등의 함수를 사용하여 불변성을 유지해야 한다.
+
+---
+
+# 7. 컴포넌트의  라이프사이클 메서드
+## 7.1 라이프사이클 메서드의 이해
+  - **클래스형 컴포넌트**에서만 `라이프사이클 메서드` 사용가능
+  - **함수형 컴포넌트**에서는 **`Hooks` 기능을 사용하여 비슷한 작업을 처리**
+  - 라이프사이클 메서드는 총 **세 가지**
+    - <mark>마운트</mark> : DOM이 생성되고 웹 브라우저상에 나타나는 것
+      - **`constructor`**
+      - **`getDerivedStateFromProps`**
+      - **`render`**
+      - **`componentDidMount`**
+      
+    - <mark>업데이트</mark> : props, state가 변경되는 경우되는 경우 발생
+      - **`getDerivedStateFromProps`**
+      - **`shouldComponentUpdate`**
+      - **`render`**
+      - **`getSnapshotBeforeUpdate`**
+      - **`componentDidUpdate`**
+      
+    - <mark>언마운트</mark> : 마운트의 반대 과정, DOM에서 컴포넌트를 제거
+      - **`componentWillUnmount`**
+
+## 7.2 라이프사이클 메서드 살펴보기
+  - `render()` 메서드
+    - 라이프사이클 메서드 중 유일한 **필수 메서드**
+    - 이 메서드 안에서 `this.props`, `this.state`에 접근 가능
+    - **리액트 요소를 리턴**
+
+  - `counstructor` 메서드
+    - 컴포넌트의 생성자 메서드로 컴포넌트를 만들 때 처음 생성
+    - 초기 `state`를 설정
+
+  - `getDerivedStateFromProps` 메서드
+    - `props`로 받아 온 값을 `state`에 동기화시키는 용도
+    - 컴포넌트가 **마운트**, **업데이트**될 때 호출
+   
+  - `componentDidMount` 메서드
+    - 컴포넌트를 만들고, 첫 렌더링을 마친 후 실행
+    - 프레임워크 함수 호출, 이벤트 등록, 비동기 작업을 처리할 때 사용
+    
+  - `shouldComponentUpdate` 메서드
+    - props, state를 변경했을 때, **리렌더링을 할지 여부를 정하는 메서드**
+    - `true`를 리턴하면 리렌더링 진행, `false`를 리턴하면 리렌더링 중지
+
+  - `getSnapshotBeforeUpdate` 메서드
+    - `render`에서 만들어진 결과물이 브라우저에 실제 반영되기 직전에 호출
+    
+  - `componentDidUpdate` 메서드
+    - 리렌더링을 완료 후 실행
+    - 업데이트가 끝난 후이므로 DOM 관련 처리 가능
+
+  - `componentWillUnmount` 메서드
+    - 컴포넌트를 DOM에서 제거할 때 실행
+    
+  - `componentDidCatch` 메서드
+    - 컴포넌트 렌더링 도중에 에러를 처리하는 메서드
+    - 컴포넌트 자신에게 발생하는 에러는 처리할 수 없음
+    - 자신의 `this.props.children`으로 전달되는 컴포넌트에서 발생하는 에러만 처리 가능
+
+---
+
+# 8. Hooks
+## 8.1 useState
+```jsx
+import React, { useState } from 'react';
+
+const Counter = () => {
+  const [value, setValue] = useState(0);
+  return (
+    <div>
+      <p>
+        헌재 카운터 값은 <b>{value}</b>입니다.
+      </p>
+      <button onClick={() => setValue(value + 1)}>+1</button>
+      <button onClick={() => setValue(value - 1)}>-1</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+  - `useState`는 가장 기본적인 Hook
+  - **함수형 컴포넌트**에서도 가변적인 상태를 지닐 수 있도록 함
+  - `useState` 함수의 파라미터에는 **상태의 기본값**을 넣는다.
+  - `useState` 함수는 **배열을 리턴**
+  - 리턴된 배열의 첫 번째 원소는 **상태 값**, 두 번째 원소는 **상태를 설정하는 함수**
+ 
+## 8.2 useEffect
+```jsx
+import React, { useState, useEffect } from 'react';
+
+const Info = () => {
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
+  useEffect(()=>{
+    console.log('렌더링이 완료되었습니다!');
+    console.log({
+      name,
+      nickname
+    });
+  });
+  
+  const onChangeName = e => {
+    setName(e.target.value);
+  };
+  
+  const onChengeNickname = e => {
+    setNickname(e.target.value);
+  };
+  
+  return (
+   (...)
+  );
+};
+```
+  - `useEffect`는 컴포넌트가 **렌더링될 때마다 특정 작업을 수행**하도록 설정하는 `Hook`
+  - **클래스형 컴포넌트**의 `componentDidMount`, `componentDidUpdate`를 합친 형태
+  
+    - **마운트될 때만 실행**하고 싶은 경우
+      ```jsx
+      useEffect(() => {}, []);
+      ```
+      - useEffect 함수의 **두 번째 파라미터로 비어 있는 배열**을 입력
+      
+    - **특정값이 업데이트될 때만 실행**하고 싶은 경우
+      ```jsx
+      useEffect(() => {}, [name]);
+      ```
+        - useEffect 함수의 **두 번째 파라미터로 특정값**을 입력
+  - 뒷정리 하기
+    - 컴포넌트가 언마운트되기 전이나 업데이트되기 직전에 어떠한 작업을 수행하고 싶다면 useEffect에서 뒷정리(cleanup) 함수를 반환한다.
+
+## 8.3 useReducer
+  - useState보다 더 다양한 컴포넌트 상황에 따라 상태값을 업데이트하도록 하는 `Hook`
+  - `reducer`는**현재 상태**, 업데이트를 위해 필요한 정보를 담은 **액션** 값을 전달받아 <mark>새로운 상태를 반환하는 함수</mark>
+  ```jsx
+  import React, { useReducer } from 'react';
+  
+  function reducer(stat, action){
+    switch (action.type){
+      case 'INCREMENT':
+        return { value: state.value + 1 };
+      case 'DECREMENT':
+        return { value: state.value - 1 };
+      default:
+        return state;
+    }
+  }
+  
+  const Counter = () => {
+    const [state, dispatch] = useReducer(reducer, { value: 0 });
+    return (
+      <div>
+        <p>
+          헌재 카운터 값은 <b>{state.value}</b>입니다.
+        </p>
+        <button onClick={() => dispatch({ type: 'INCREMENT' })}>+1</button>
+        <button onClick={() => dispatch({ type: 'DECREMENT' })}>-1</button>
+      </div>
+    );
+  };
+  
+  export default Counter;
+  ```
+  - `useReducer`의 **첫 번째 파라미터**에는 `reducer` 함수를 입력, **두 번째 파라미터**에는 해당 `reducer`의 기본값을 입력
+  - `useReducer` 함수는 배열을 리턴
+  - 리턴되는 **첫 번째 원소는 현재 상태**이고 **두 번째 원소는 액션을 발생시키는 함수**
+  - `useReducer`를 사용하는 가장 큰 장점은 컴포넌트 **업데이트 로직을 컴포넌트 바깥으로 빼낼 수 있다는 점**
+
+## 8.4 useMemo
+  - `useMemo`를 사용하여 함수형 컴포넌트 내부에서 발생하는 연산을 최적화할 수 있음
+  - 렌더링하는 과정에서 특정 값이 바뀌었을 때만 연산을 실행하고, 값이 바뀌지 않았다면 이전에 연산했던 결과를 다시 사용하는 방삭
+  ```jsx
+  const avg = useMemo(() => getAverage(list), [list]);
+  ```
+  
+## 8.5 useCallback
+```jsx
+import React, { useState, useMemo, useCallback } from "react";
+
+const getAverage = numbers => {
+  console.log("평균값 계산중...");
+  if (numbers.length === 0) return 0;
+  const sum = numbers.reduce((a, b) => a + b);
+  return sum / numbers.length;
+};
+
+const Average = () => {
+  const [list, setList] = useState([]);
+  const [number, setNumber] = useState("");
+
+  const onChange = useCallback(e=> {
+    setNumber(e.target.value);
+  }, []);
+
+  const onInsert = useCallback(e=> {
+    const nextList = list.concat(parseInt(number));
+    setList(nextList);
+    setNumber('');
+  }, [number, list]);
+
+  const avg = useMemo(() => getAverage(list), [list]);
+
+  return (
+    <div>
+      <input value={number} onChange={onChange}></input>
+      <button onClick={onInsert}>등록</button>
+      <ul>
+        {list.map((value, index) => (
+          <li key={index}>{value}</li>
+        ))}
+      </ul>
+      <div>
+        <b>평균값:</b> {avg}
+      </div>
+    </div>
+  );
+};
+
+export default Average;
+```
+  - `useCallback`은 `useMemo`와 상당히 비슷한 기능
+  - `useCallback`을 사용하면 **이벤트 핸들러 함수를 필요할 때만 생성 가능
+  - `useCallback`의 첫 번째 파라미터에는 생성하고 싶은 함수를 입력
+  - `useCallback`의 두 번째 파라미터에는 특정 값이 바뀌었을 때 함수를 새로 생성할지를 입력
+
+## 8.6 useRef
+  - `useRef`는 함수형 컴포넌트에서 ref를 쉽게 사용할 수 있도록 함
+  - `useRef`를 사용하여 ref를 설정하면 `useRef`를 통해 만든 객체 안의 current값이 실제 엘리먼트를 가리킴

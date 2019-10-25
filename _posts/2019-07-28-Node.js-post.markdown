@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "Node.js 정리"
+date:   2019-07-28 14:44:02 +0900
+---
+
+### 1. Node.js 
+* 1.1 Node.js란?
+    - Node.js는 **자바스크립트를 브라우저 외**의 다른 환경에서도 사용할 수 있게 해주는 런타임이다.
+    - **http 서버가 내장**되어 있기 때문에 보통 서버로 많이 활용
+    - Node.js에서는 짧은 코드로 서버를 구동할 수 있음
+    - 서버 언어는 JSP, PHP, ASP, Python, Ruby 등의 언어를 사용했기 때문에 자바스크립트를 사용하는 클라이언트와 언어가 일치하지 않아서 불편함이 발생함
+    - Node.js를 사용하면 **자바스크립트로 클라이언트와 서버를 모두 만들 수 있으므로** 풀스택 개발에 유리함
+
+* 1.2 npm이란?
+    - **Node Package Manager**의 줄임말
+    - Node.js에서 자주 쓰이는 자바스크립트 코드들을 패키지로 만들어 사용할 수 있게 하는 패키지 저장소
+    - npm에서 패키지를 사용하면 패키지들을 체계적으로 관리할 필요가 있음
+    - 그래서 패키지명과 패키지 버전을 **package.json**파일에 기록한다.
+    - `npm init` 명령어로 **package.json**파일을 생성
+
+### 2. 서버
+* 2.1 서버만들기
+    ```javascript
+    const http = require('http');
+    http.createServer((request, response) => {
+        console.log('server start!');
+    }).listen(8080);
+    ```
+    - Node.js 자체에서 기본적으로 **http 패키지**를 제공함
+    - 서버가 실행된 후의 동작을 콜백함수로 등록
+
+* 2.2 Request, Response
+    - Request는 요청을 담당한다. 즉, 서버로 보내는 요청에 대한 정보가 담김
+    - 서버는 Request를 받을 때까지 기다리면서 Request를 받으면 해당 처리를 수행한다.
+    - **Request에 대한 처리 후 결과를 Response 객체로 돌려준다.**
+    - Response는 클라이언트로 돌려줄 응답을 담당한다.
+    - Request -> 서버 처리 -> Response
+    - Request와 Response에는 **Header**와 **Body**라는 것이 존재
+    - Header와 Body
+        1. Header에는 **Request, Response에 대한 정보**(종류, 크기, 캐시 여부 등등)가 담김
+        2. Body에는 실제 주고받고자 하는 내용이 담김
