@@ -573,3 +573,288 @@ date:   2019-11-11 11:45:02 +0900
     }
     ```
       - 주소연산에서 +0, +1의 의미는 **선언된 자료형의 크기만큼 더하라는 의미**이다
+
+---
+
+# 12. 포인터란 무엇인가
+## 12.1 포인터란
+  - 포인터 : **주소를 저장**하는 변수
+  - 기존의 변수는 데이터를 저장하는 반면 **포인터는 메모리 공간의 주소를 저장**
+
+## 12.2 포인터 변수의 선언과 사용
+  - 포인터 변수의 선언
+    ```c
+    int* pointer = NULL;
+    ```
+    - 자료형 : 포인터 변수의 자료형을 지정, 자료형 다음에 **`*` 연산자 붙임**
+    - 포인터 변수 이름 : 주소를 저장할 변수의 이름 지정
+    - NULL 포인터 설정 : 포인터 변수 선언 시 `NULL`로 초기화
+    - **`NULL` 포인터**는 포인터 변수에 아무 주소도 저장하지 않는다는 의미
+    ```c
+    #include <stdio.h>
+    int main(void){
+      char* cp = NULL;
+      int* ip = NULL;
+
+      printf("%x %x %x \n", &cp, cp, *&cp); 
+      // &cp : 포인터 변수 cp의 주소
+      // cp : 포인터 변수 cp에 저장된 데이터
+      // *&cp : 포인터 변수 cp에 저장된 데이터
+      printf("%x %x %x \n", &ip, ip, *&ip);
+
+      printf("%d %d \n", sizeof(char*), sizeof(int*));
+      printf("%d %d \n", sizeof(cp), sizeof(ip));
+
+      return 0;
+    }
+    ```
+      - 포인터 변수 선언 시 `NULL`로 초기화 했기 때문에 포인터 변수에는 **0이 저장된다.**
+      - `NULL`은 ASCII 값으로 0이다.
+      - 32비트 운영체제 기준으로 **모든 포인터 변수의 크기는 4바이트**
+  - 포인터 변수의 사용
+    ```c
+    #include <stdio.h>
+    int main(void){
+      char c = 'A';
+      char* cp = NULL;
+
+      cp = &c;
+
+      printf("%x %c %c \n", &c, c, *&c);
+      printf("%x %x %x \n", &cp, cp, *&cp);
+
+      printf("%c \n", c);
+      printf("%c \n", *cp);
+
+      return 0;
+    }
+    ```
+      - c == *&c == *cp
+  - 포인터 변수 **선언과 초기화를 동시**에 할 수도 있다.
+    ```c
+    char* cp = &c;
+    ```
+- 포인터 사용 시 주의사항
+  - 포인터 변수는 반드시 간접 접근할 변수의 주소를 초기화한 후에 사용해야한다.
+  - 포인터 변수에 임의의 주소를 초기화할 수 없다.
+
+## 12.3 다차원 포인터 변수의 선언과 사용
+  - 다차원 포인터 : **2차원 이상**의 포인터 변수
+  - 다차원 포인터 선언
+    ```c
+    int** p2 = NULL; // 2차원 포인터
+    ```
+      - 자료형 : 2차원 포인터 변수의 자료형을 지정, 자료형 뒤에 `*`를 두 개 지정
+      - 2차원 포인터 변수 이름 : **1차원 포인터의 주소를 저장**할 2차원 포인터 변수의 이름 지정
+    ```c
+    int*** p3 = NULL; // 3차원 포인터
+    ```
+      - 자료형 : 3차원 포인터 변수의 자료형을 지정, 자료형 뒤에 `*`를 세 개 지정
+      - 3차원 포인터 변수 이름 : **2차원 포인터의 주소를 저장**할 3차원 포인터 변수의 이름 지정
+  - 모든 포인터 변수에는 4바이트 크기의 메모리 공간이 할당되므로 **포인터 변수도 주소를 가짐**
+  - 2차원 이상의 포인터 변수는 포인터 변수의 주소를 저장하는 변수
+    - 1차원 포인터 변수는 일반 변수의 주소를 저장
+    - **n차원 포인터 변수는 n-1차원 포인터 변수의 주소를 저장**
+    ```c
+    #include <stdio.h>
+    int main(void){
+      int num = 0;
+      int* p1 = NULL;
+      int** p2 = NULL;
+      int*** p3 = NULL;
+
+      p1 = &num;
+      p2 = &p1;
+      p3 = &p2;
+
+      return 0;
+    }
+    ```
+    - n차원 포인터는 `***` 연산자를 n개 사용**해야 데이터에 간접 접근할 수 있음
+
+## 12.4 주소의 가감산
+  - C언어의 자료형은 모두 주소를 가지며 **주소의 가감산이 가능**
+  - 자료형의 크기에 따라 가감산의 단위가 다름
+    - `char`형 주소에 +1을 하면 **1바이트 증가**
+    - `int`형 주소에 +1을 하면 **4바이트 증가**
+    - `double`형 주소에 +1을 하면 **8바이트 증가**
+  ```c
+  #include <stdio.h>
+  int main(void){
+    char c = 'A';
+    char* cp = NULL;
+    char** cpp = NULL;
+
+    cp = &c;
+    cpp = &cp;
+
+    printf("%x %x %x \n", &c, &cp, &cpp);
+    printf("%x %x %x \n", &c+1, &cp+1, &cpp+1);
+
+    printf("%c %x %x \n", c, cp, cpp);
+    printf("%c %x %x \n", c+1, cp+1, cpp+1);
+
+    return 0;
+  }
+  ```
+
+## 12.5 함수 포인터
+  - 함수 이름은 **함수의 시작주소**
+    - 함수를 실행하기 위해서는 함수가 있는 메모리 공간의 주소가 필요한데 그것이 **함수의 이름**
+    ```c
+    #include <stdio.h>
+    int main(void){
+      printf("%x %x %x \n", main, printf, scanf); // 함수의 이름은 함수의 시작주소
+
+      return 0;
+    }
+    ```
+  - 함수 포인터는 **함수의 시작 주소를 저장하는 변수**
+    ```c
+    int (*pointer) (int, int)
+    ```
+      - 자료형 : 가리키는 대상이 되는 함수의 자료형을 설정
+      - 함수 포인터 이름 : 함수 포인터의 이름을 설정하며 **괄호와 *을 반드시 사용**
+      - 인수 자료형 목록 : 가리키는 대상이 되는 함수의 인수들의 자료형 목록
+  - 함수 포인터를 사용하는 방법
+    ```c
+    #include <stdio.h>
+    void add(double num1, double num2);
+
+    int main(void){
+      double x = 3.1, y = 5.1;
+      void (*pointer) (double, double);
+
+      printf("add함수의 주소 : %x \n", add);
+      printf("함수 포인터의 주소 : %x \n", &pointer);
+
+      pointer = add;  // 함수 포인터 pointer에 함수의 시작 주소 add를 저장
+      pointer(x,y);
+
+      return 0;
+    }
+
+    void add(double num1, double num2){
+      double result;
+      result = num1 + num2;
+      printf("$lf + %lf = %lf입니다. \n", num1, num2, result);
+    }
+    ```
+
+---
+
+# 13. 포인터와 배열
+## 13.1 포인터와 1차원 배열
+  - 배열 이름은 **배열의 시작주소**
+    ```c
+    #include <stdio.h>
+    int main(void){
+      int array[3] = {10, 20, 30};
+
+      printf("%x %x %x \n", array, array+0, &array[0]); // 첫 번째 요소의 주소
+      printf("%x %x \n", array+1, &array[1]) // 두 번째 요소의 주소
+      printf("%x %x \n", array+2, &array[2]) // 세 번째 요소의 주소
+
+      printf("%d %d %d \n", sizeof(array), sizeof(array+0), sizeof(&array[0]));
+      // array의 크기는 12바이트, array+0의 크기는 4바이트
+
+      return 0;
+    }
+    ```
+      - 배열 이름 array의 크기는 12(배열 전체의 크기)바이트이다.
+  - 1차원 포인터 변수에 1차원 배열의 주소를 저장하면 **포인터 변수를 배열처럼 사용 가능**
+    ```c
+    #include <stdio.h>
+    int main(void){
+      int array[3] = {10, 20, 30};
+      int i = 0;
+      int* p = NULL;
+
+      p = array;
+
+      for(i = 0; i < 3; i++){
+        printf("%d %d %d \n", *(p+i), *&p[i], p[i]);
+      }
+
+      printf("---------------------\n");
+
+      for(i = 0; i < 3; i++){
+        printf("%d %d %d \n", *(array+i), *&array[i], array[i]);
+      }      
+
+      printf("---------------------\n");
+	  printf("%d %d \n", sizeof(array), sizeof(p));
+
+      return 0;
+    }
+    ```
+      - 포인터 변수와 배열의 크기 차이
+        - array의 크기는 array배열 전체의 크기 12바이트
+        - 포인터 p의 크기는 4바이트(모든 포인터의 크기는 4바이트이므로)
+
+## 13.2 포인터와 2차원 배열
+  - 1차원 배열일 때 *(array+i) === array[i] === *&array[i]는 **값**
+  - 2차원 배열일 때 *(array+i) === array[i] === *&array[i]는 **주소**
+  - 포인터 변수를 통한 2차원 배열의 접근
+    ```c
+    #include <stdio.h>
+    int main(void){
+      int array[2][3] = {10, 20, 30, 40, 50, 60};
+      int* p = NULL;
+
+      p = array;
+
+      printf("-----------------\n");
+      printf("%x %x %x \n", &p[0], &p[1], &p[2]); // 1행의 주소 출력
+      printf("%x %x %x \n", &p[3], &p[4], &p[5]); // 2행의 주소 출력
+
+      printf("-----------------\n");
+      printf("%d %d %d \n", p[0], p[1], p[2]);   // 10 20 30 출력
+      printf("%d %d %d \n", p[3], p[4], p[5]);   // 40 50 60 출력
+
+      return 0;
+    }
+    ```
+      - 포인터 변수로 2차원 배열에 접근할 때 `p[i] == *(p+i)`이다.
+      - 1차원 포인터 변수 p에 2차원 배열의 시작 주소를 저장해서 **p[0], p[1], ... 와 같이 1차원 배열처럼 접근했다.**
+      - 1차원 포인터 변수 p를 이용해서 2차원 배열처럼 접근할 수는 없을까?
+        ```c
+        #include <stdio.h>
+        int main(void){
+          int array[2][3] = {10, 20, 30, 40, 50, 60};
+          int* p = NULL;
+
+          p = array;
+
+          printf("%d %d %d \n", p[0][0], p[0][1], p[0][2]); // 에러
+          printf("%d %d %d \n", p[1][0], p[1][1], p[1][2]); // 에러
+          return 0;
+        }
+
+        ```
+          - 이 문제를 해결하는 방법은 **배열 포인터 변수**를 사용하는 것이다.
+  - **배열 포인터 변수** : 배열을 가리키는 포인터 변수
+  - 배열 포인터 변수 선언
+    ```c
+    int (*p) [3];
+    ```
+      - 자료형 : 배열 포인터 변수가 저장하는 배열의 자료형
+      - 배열 포인터 변수 이름 : `*` 연산자와 배열 포인터 변수 이름을 함께 **괄호로 묶음**
+      - 열의 길이 : 배열 포인터 변수가 가리키는 **배열의 열의 길이를 지정**
+    ```c
+    #include <stdio.h>
+    int main(void){
+      int array[2][3] = {10, 20, 30, 40, 50, 60};
+      int (*p) [3] = NULL;
+
+      p = array;
+
+      printf("%d %d %d \n", p[0][0], p[0][1], p[0][2]);
+      printf("%d %d %d \n", p[1][0], p[1][1], p[1][2]);
+
+      return 0;
+    }
+    ```
+      - **3열짜리 2차원 배열의 주소를 저장할 수 있는 배열 포인터** 변수 p를 선언
+## 13.3 포인터 배열
+  - 포인터 배열의 선언과 필요성
