@@ -1088,3 +1088,318 @@ date:   2019-11-11 11:45:02 +0900
   - void형 포인터 변수를 이용하여 값을 **참조, 저장하거나 변경할 수는 없음**
   - **강제 형변환**을 하여 포인터 변수의 자료형을 변경 후, 포인터 변수를 이용한 값 참조가 가능
 
+ 
+---
+
+# 15. 구조체와 공용체란 무엇인가
+## 15.1 구조체란
+  - **하나 이상의 변수를 묶어 그룹화**하는 사용자 정의 자료형
+    - **같은 자료형**의 변수들로 그룹화 가능
+    - **서로 다른 자료형**의 변수들로 그룹화 가능
+  - 구조체 정의
+    ```c
+    struct point // 구조체 키워드와 구조체 이름
+    {
+      int x, y; // 멤버변수
+    };
+    ```
+    - 구조체 키워드 : 구조체의 시작을 알리는 `struct` 키워드 지정
+    - 구조체 이름 : 구조체를 구분하는 이름
+    - 멤버 변수 : 구조체를 구성하는 구조체 멤버 변수의 이름
+
+  - 구조체 변수
+    - **구조체 멤버 변수에 접근**하기 해주는 변수
+    - 구조체 정의와 선언을 동시에 가능
+    ```c
+    struct point
+    {
+      int x, y;
+    } p1, p2, p3; // 구조체 정의와 선언 동시에 하는 방법
+    ```
+    - 구조체 정의와 구조체 변수 선언 따로 가능
+    ```c
+    #include <stdio.h>
+
+    struct point
+    {
+      int x, y;
+    };
+
+    int main(void)
+    {
+      struct point p1, p2, p3; // 구조체 변수를 개별적으로 선언하는 방법
+
+      return 0;
+    }
+    ```
+  - 구조체 변수로 멤버 변수에 접근
+    - 구조체 변수로 멤버 변수에 접근하기 위해서 **접근(.) 연산자** 사용
+    ```c
+    g1.a;
+    ```
+    - 구조체 변수 : 멤버 변수에 접근하게 해주는 구조체 변수의 이름을 지정
+    - 접근 연산자 : 구조체 변수로 멤버 변수에 접근하기 위해 연산자를 지정
+    - 멤버 변수 : 접근하려는 멤버 변수의 이름을 지정
+  - 구조체 변수의 초기화
+    ```c
+    #include <stdio.h>
+
+    struct point
+    {
+      int x, y;
+    };
+
+    int main(void)
+    {
+      struct point p1 = {10, 20};
+      struct point p2;  // 구조체 선언과 초기화를 따로하면 에러 발생
+      p2 = {10, 20};    // 에러
+      // 에러를 해결하기 위해서 구조체 변수로 멤버변수에 접근하여 초기화를 해야한다.
+      p2.x = 10;
+      p2.y = 20;
+    }
+    ```
+    - 중괄호를 이용해서 구조체 변수 p1을 **선언하고 동시에 초기화**
+  - 구조체 변수의 복사
+    ```c
+    #include <stdio.h>
+    
+    struct point
+    {
+      int x, y;
+    };
+
+    int main(void)
+    {
+      struct point p1 = {10, 20};
+      struct point p2  ={0, 0};
+
+      p2 = p1;    // 구조체 p2에 p2을 복사
+
+      return 0;
+    }
+    ```
+    - 변수 간에 복사가 가능한 것처럼 **구조체 변수도 서로 복사가 가능**
+    - 구조체 변수 간에 **사칙연산은 불가능**, 오직 대입 연산만 가능
+
+## 15.2 중첩 구조체
+  - 중첩 구조체의 초기화
+    ```c
+    #include <stdio.h>
+    
+    struct score
+    {
+      double math;
+      double english;
+      double total;
+    };
+
+    struct student
+    {
+      int no;
+      struct score s;
+    };
+
+    int main(void)
+    {
+      struct student stu1 ={20101323, {90, 80, 0}}; // 중괄호로 중첩 구조체의 범위를 지정하여 초기화
+      struct student stu2 ={20101434, 70, 100, 20}; // 중괄호를 생략할 수도 있다.
+
+      return 0;
+    }
+    ```
+
+## 15.3 구조체와 배열
+  - 맴버 변수로 배열 사용하기
+    ```c
+    #include <stdio.h>
+
+    struct student
+    {
+      char no[10];
+      char name[20];
+      double math;
+      double english;
+      double total;
+    };
+
+    int main(void)
+    {
+      struct student stu = {"20101323", "Park", 80, 80, 0};
+      return 0;
+    }
+    ```
+  - 구조체 변수로 배열 사용하기
+    ```c
+    #include <stdio.h>
+
+    struct student
+    {
+      char no[10];
+      char name[20];
+      double math;
+      double english;
+      double total;
+    };
+
+    int main(void)
+    {
+      struct student stu[3] = {
+        {"20101323", "Park", 80, 80, 0},
+        {"20101324", "Kim", 95, 85, 0},
+        {"20101325", "Lee", 100, 90, 0},
+      }
+
+      return 0;
+    }
+    ```
+    - 많은 수의 구조체 변수를 다룰 경우 **구조체 변수로 배열**을 사용한다
+
+## 15.4 구조체와 포인터
+  - 멤버 변수로 포인터 사용하기
+    ```c
+    #include <stdio.h>
+
+    struct point
+    {
+      int* x;
+      int* y;
+    };
+
+    int main(void)
+    {
+      int num1 = 4, num2 = 5;
+      struct point p1;
+      p1.x = &num1;
+      p1.y = &num2;
+    }
+    ```
+    - 포인터 변수의 시작주소와 포인터 변수의 첫번째 멤버변수의 시작주소는 같음
+  - 구조체 변수로 포인터 사용하기
+    ```c
+    #include <stdio.h>
+
+    struct student
+    {
+      char no[10];
+      char name[20];
+      double total;
+    };
+
+    int main(void)
+    {
+      struct student stu = {"20101323", "Park", 160};
+      struct student* p = NULL;
+
+      p = &stu;
+      printf("%s %s %lf \n", stu.no, stu.name, stu.total);
+      printf("%s %s %lf \n", (*p).no, (*p).name, (*p).total);
+      printf("%s %s %lf \n", p->no, p->name, p->total);
+
+      return 0;
+    }
+    ```
+  - 자기 참조 구조체와 외부 참조 구조체
+    ```c
+    #include <stdio.h>
+
+    struct student
+    {
+      char name[20];
+      int money;
+      struct student* link;
+    };
+
+    int main(void)
+    {
+      struct student stu1 = {"Kim", 90, NULL};
+      struct student stu2 = {"Lee", 80, NULL};
+      struct student stu3 = {"Goo", 60, NULL};
+
+      stu1.link = &stu2;
+      stu2.link = &stu3;
+
+      printf("%s, %d \n", stu1.name, stu1.money);
+      printf("%s, %d \n", stu1.link->name, stu1.link->money);
+      printf("%s, %d \n", stu1.link->link->name, stu1.link->link->money);
+      printf("%s, %d \n", (*stu1.link).name, (*stu1.link).money);
+
+      return 0;
+    }
+    ```
+
+## 15.5 구조체와 함수
+  - 구조체를 함수의 인자로 전달하기
+    - 값에 의한 호출
+      ```c
+      #include <stdio.h>
+
+      struct point
+      {
+        int x, y;
+      };
+
+      void function(struct point call);
+
+      int main(void)
+      {
+        struct point p = {10 ,20};
+        function(p);    // 값에 의한 호출
+
+        return 0;
+      }
+      // 매개 변수 call에 구조체 변수 p가 복사
+      void function(struct point call)
+      {
+        printf("%d %d \n", call.x, call.y);
+      }
+      ```
+    - 주소에 의한 호출
+      ```c
+      #include <stdio.h>
+
+      struct point
+      {
+        int x, y;
+      };
+
+      void function(struct point* call);
+
+      int main(void)
+      {
+        struct point p = {10, 20};
+        function(&p); // 주소에 의한 호출
+
+        return 0;
+      }
+
+      // p의 주소가 매개 변수 call에 저장
+      void function(struct point* call)
+      {
+        printf("%d %d \n", call->x, call->y);
+        printf("%d %d \n", (*call).x, (*call).y);
+      }
+      ```
+
+## 15.6 공용체와 열거형
+  - 공용체
+    - 그룹으로 묶어진 여러 개의 멤버 변수들 중에 **가장 큰 메모리 공간을 공유**해서 사용하는 것
+    ```c
+    #include <stdio.h>
+
+    union point
+    {
+      int x, y;
+    };
+
+    struct student
+    {
+      int a, b;
+    };
+
+    int main(void)
+    {
+      printf("%d %d \n", sizeof(union point), sizeof(struct student));
+      return 0;
+    }
+    ```
