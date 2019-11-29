@@ -1403,3 +1403,108 @@ date:   2019-11-11 11:45:02 +0900
       return 0;
     }
     ```
+    
+---
+
+# 16. 문자열 표준 함수와 기타 표준 함수
+## 16.1 문자열 처리함수
+  - gets() 와 puts()
+    함수의 원형|예|설명
+    -|-|-
+    char* gets(char* s);|char array[10];<br>gets(array);|전달된 메모리 주소에 **문자열 저장**<br>성공 : 입력된 문자열 반환<br>실패 : NULL 포인터 반환
+    int puts(const char* s);|char array[10] = "Good luck";<br>puts(array);|전달된 메모리 주소의 **문자열 출력**<br>성공 : 0이 아닌 값 반환<br>실패 : EOF 반환
+    - gets() 함수는 함수의 인자로 전달받은 메모리 주소에 문자열을 입력
+    - 마지막으로 입력된 Enter키는 자동으로 제거하고 **문자열 끝에 종료문자(NULL 문자)를 붙여준다.**
+    - gets() 함수를 사용할 때 메모리 오버플로우가 발생하지 않게 문자열의 크기를 고려해야 한다.
+    - puts() 함수를 사용하여 문자열을 출력하는 경우 자동으로 **개행문자가 삽입된다**
+      ```c
+      #include <stdio.h>
+
+      int main(void)
+      {
+        char array1[20];
+        char array2[20];
+
+        gets(array1);
+        puts(array1);
+
+        scanf("%s", array2);
+        printf("%s \n", array2);
+
+        return 0;
+      }
+      ```
+      - scanf() 함수를 사용해 입력을 받으면 공백을 종료문자로 인식한다.
+      - 하지만 gets() 함수는 공백을 문자로 인식하고 문자열에 추가한다.
+  - strlen()
+      함수의 원형|예|설명
+    -|-|-
+    size_t strlen(const char* s);|char array[10] = "Good luck";<br>strlen(array);|전달된 메모리 주소로부터<br> 종료 문자를 만날때까지 <br>저장된 문자열의 길이를 반환
+    - 문자열의 끝을 나타내는 **종료 문자는 길이에 포함되지 않음**
+    ```c
+    #include <stdio.h>
+    #include <string.h>
+
+    int main(void)
+    {
+      char array1[] = "abcdef";
+      char array2[] = "가나다라";
+
+      printf("%d \n", strlen(array1));  // 6출력
+      printf("%d \n", strlen(array2));  // 8출력
+
+      printf("%d \n", sizeof(array1));  // 7출력
+      printf("%d \n", sizeof(array2));  // 9출력
+    }
+    ```
+    - 영문은 한글자 당 1바이트, 한글은 한글자 당 2바이트이므로 문자열 길이가 다르다
+    - sizeof() 함수는 **종료문자를 포함한 문자열의 길이를 반환한다.**
+  - srtcpy()와 strcpy()
+    함수의 원형|예|설명
+    -|-|-
+    char* strcpy(char* dest,<br> const char*src);|char array1[10] = "Good luck";<br>char array2[10];<br>strcpy(array2, array1);|array1의 문자열을 array2에 복사<br>성공 : 복사된 문자열의 시작주소 반환
+    char* strncpy(char* dest,<br> const char*src, size_t n);|char array1[10] = "Good luck";<br>char array2[10];<br>strncpy(array2, array1, 3);|array1의 문자열을 array2에 3바이트만큼 복사<br>성공 : 복사된 문자열의 시작주소 반환    
+    - strcpy(), strncpy() 함수는 문자열을 복사
+    - 두 번째 인자로 전달받은 메모리 주소에 저장된 문자열을 첫 번째 인자로 전달받은 메모리 주소에 복사
+    - strncpy()의 세 번째 인자는 **복사할 크기를 나타냄**
+    ```c
+    #include <stdio.h>
+    #include <string.h>
+
+    int main(void)
+    {
+      char array1[6] = "Hello";
+      char array2[3];
+
+      strncpy(array2, array1, 3);
+      array2[2] = '\0'; // 종료문자 삽입
+
+      puts(array2);
+
+      return 0;
+    }
+    ```
+  - strcat()과 strncat()
+    함수의 원형|예|설명
+    -|-|-
+    char* strcat(char* dest,<br> const char*src);|char array1[10] = "Good";<br>char array2[5] = "luck";<br>strcat(array1, array2);|array1에 array2 문자열을 결합<br>성공 : 결합된 문자열의 시작주소 반환
+    char* strncat(char* dest,<br> const char*src, size_t n);|char array1[10] = "Good";<br>char array2[5] = "luck";<br>strcat(array1, array2, 3);|array1에 array2 문자열을 3바이트만큼 결합<br>성공 : 결합된 문자열의 시작주소 반환      
+    - strcat()과 strncat()함수는 문자열을 결합한다.
+    - strncat() 함수의 세 번째 인자는 **결합해야 할 크기를 나타냄**
+    - 결합할 때는 array1의 **문자열 맨끝에 있는 종료문자가 생략**되고 array2의 문자열이 붙는다.
+  - strcmp()와 strncmp()
+    함수의 원형|예|설명
+    -|-|-
+    int strcmp(const char* s1, <br>const char* s2);|char array1[10] = "Good";<br>char array2[5] = "luck";<br>strcmp(array1, array2);|array1의 문자열과 array2의 문자열을 비교
+    int strncmp(const char* s1, <br>const char* s2, size_t n);|char array1[10] = "Good";<br>char array2[5] = "luck";<br>strcmp(array1, array2, 3);|array1의 문자열과 array2의 문자열을 3개까지 비교   
+    - 문자들의 ASCII 코드값을 비교한다.
+    - 반환값이 양수이면 array1이 array2보다 사전순으로 뒤
+    - 반환값이 음수이면 array1이 array2보다 사전순으로 앞
+    - 반환값이 0이면 같은 문자열
+
+# 16.2 문자열 처리함수 2
+  - strchr()와 strstr()
+    함수의 원형|예|설명
+    -|-|-
+    char* strchr(const char* s,<br> int c);|char array1[10] = "Good";<br>strchr(array1, 'd');|array1에서 문자 d의 메모리 주소를 검색 <br>성공 : 찾은 문자의 메모리 주소를 반환<br>실패 : 0 리턴
+    char* strstr(const char* s1,<br> const char* s2);|char array1[10] = "Good-morning";<br>char array2[10]="morning";<br>strstr(array1, array2);|array1에서 array2에 저장된 문자열을 검색 <br>성공 : 찾은 문자열의 메모리 주소를 반환<br>실패 : 0 리턴
