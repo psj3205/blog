@@ -1508,3 +1508,16 @@ date:   2019-11-11 11:45:02 +0900
     -|-|-
     char* strchr(const char* s,<br> int c);|char array1[10] = "Good";<br>strchr(array1, 'd');|array1에서 문자 d의 메모리 주소를 검색 <br>성공 : 찾은 문자의 메모리 주소를 반환<br>실패 : 0 리턴
     char* strstr(const char* s1,<br> const char* s2);|char array1[10] = "Good-morning";<br>char array2[10]="morning";<br>strstr(array1, array2);|array1에서 array2에 저장된 문자열을 검색 <br>성공 : 찾은 문자열의 메모리 주소를 반환<br>실패 : 0 리턴
+        
+---
+
+# 17. 콘솔 입출력과 파일 입출력
+## 17.1 문자열 처리함수
+  - 스트림
+    - 데이터를 입력하고 출력하기 위한 다리
+    - 키보드로 데이터를 입력하려면 **표준 입력 스트림**이 필요
+    - 모니터로 데이터를 출력하려면 **표준 출력 스트림**이 필요
+      스트림|설명|장치
+      -|-|-
+      stdin|표준 입력을 담당|키보드
+      stdout|표준 출력을 담당|모니터
